@@ -1,16 +1,17 @@
 #include "OGL.h"
 
-void GLClearError() { while (glGetError() != GL_NO_ERROR); }
+void GLClearError();
+// { while (glGetError() != GL_NO_ERROR); }
 
-bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (auto error = glGetError())
-	{
-		std::cout << "[OpenGL] " << error << " in " << function << " " << file << ":" << line << std::endl;
-		return false;
-	}
-	return true;
-}
+bool GLLogCall(const char* function, const char* file, int line);
+// {
+// 	while (auto error = glGetError())
+// 	{
+// 		std::cout << "[OpenGL] " << error << " in " << function << " " << file << ":" << line << std::endl;
+// 		return false;
+// 	}
+// 	return true;
+// }
 
 void FramebuferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -18,13 +19,17 @@ void FramebuferSizeCallback(GLFWwindow* window, int width, int height)
 }
 
 OGL::OGL(float windowWidth, float windowHeight) : mWindowWidth(windowWidth),
-	mWindowHeight(windowHeight), mWindow(nullptr)
+	mWindowHeight(windowHeight), mWindow(nullptr) {}
+
+OGL::~OGL()
 {
+	glfwDestroyWindow(mWindow);
+	glfwTerminate();
 }
 
 void OGL::Init()
 {
-	if (!CreateWindow(mWindow, "OGL-Engine-2.5", mWindowWidth, mWindowHeight))
+	if (!CreateWindow(mWindow, "cpp-game", mWindowWidth, mWindowHeight))
 	{
 		return;
 	}
@@ -54,6 +59,12 @@ void OGL::Init()
 	GLCall(glFrontFace(GL_CCW));
 	GLCall(glCullFace(GL_BACK));
 	GLCall(glEnable(GL_CULL_FACE));
+}
+
+void OGL::PostRender() const
+{
+	glfwPollEvents();
+	glfwSwapBuffers(mWindow);
 }
 
 bool OGL::CreateWindow(GLFWwindow*& window, const char* title, int width, int height)

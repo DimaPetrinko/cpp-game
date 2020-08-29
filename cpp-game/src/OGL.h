@@ -24,7 +24,9 @@ private:
 
 public:
 	OGL(float windowWidth, float windowHeight);
+	~OGL();
 	void Init();
+	void PostRender() const;
 	static void SetWindowWidthAndHeight(OGL* instance, const int width, const int height);
 	bool IsWindowClosed() const;
 	void DrawQuad(vec2 center, vec2 extents);

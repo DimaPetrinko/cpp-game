@@ -23,6 +23,7 @@ void Application::Start() {
   while (!ShouldExit()) {
     std::cout << " LOOP LOOP.\n";
 
+    renderer_->PostRender();
   }
 }
 
