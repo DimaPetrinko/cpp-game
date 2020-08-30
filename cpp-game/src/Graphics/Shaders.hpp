@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <tuple>
-#include "GL.h"
+#include "Graphics/GL.h"
 
 const unsigned int GetUniformLocation(unsigned int shader, const std::string& name)
 {

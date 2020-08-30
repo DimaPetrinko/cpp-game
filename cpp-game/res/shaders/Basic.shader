@@ -1,20 +1,17 @@
 #shader vertex
 #version 330
 
-layout(location = 0) in vec2 position;
-layout(location = 1) in vec2 texCoord;
+layout(location = 0) in vec2 i_Position;
+layout(location = 1) in vec2 i_TexCoord;
 
-uniform mat4 uProjection;
-uniform vec2 uPosition;
-uniform vec2 uSize;
+uniform mat4 u_MP;
 
-out vec2 oTextCoord;
+out vec2 o_TexCoord;
 
 void main()
 {
-	vec2 modifiedPosition = (position * uSize) + uPosition;
-	gl_Position = uProjection * vec4(modifiedPosition, 1.0, 1.0);
-	oTextCoord = texCoord;
+	gl_Position = u_MP * vec4(i_Position, 0, 1);
+	o_TexCoord = i_TexCoord;
 }
 
 #shader fragment
@@ -22,15 +19,15 @@ void main()
 
 out vec4 color;
 
-in vec2 textCoord;
+in vec2 i_TexCoord;
 
-uniform vec4 uColor;
-uniform sampler2D uTexture;
+uniform vec4 u_Color;
+uniform sampler2D u_Texture;
 
 void main()
 {
-	vec4 textureColor;
-	if (uTexture) textureColor = texture2D(uTexture, textCoord);
-	else textureColor = vec4(1,1,1,1);
-	color = textureColor * uColor;
+	vec4 textureColor = vec4(1,1,1,1);
+	// if (u_Texture) textureColor = texture2D(u_Texture, i_TexCoord);
+	// else textureColor = vec4(1, 1, 1, 1);
+	color = textureColor * u_Color;
 }

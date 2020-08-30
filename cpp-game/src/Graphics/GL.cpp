@@ -1,11 +1,4 @@
-#pragma once
-
-#include <iostream>
-#include "GL/glew.h"
-
-#define GLCall(x) GLClearError();\
-	x;\
-	GLLogCall(#x, __FILE__, __LINE__)
+#include "GL.h"
 
 void GLClearError() { while (glGetError() != GL_NO_ERROR); }
 

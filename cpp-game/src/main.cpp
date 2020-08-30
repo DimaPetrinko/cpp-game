@@ -1,19 +1,13 @@
 #include <iostream>
-#include <bits/stdc++.h> 
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "GL.h"
-#include "Shaders.hpp"
+#include "Graphics/GL.h"
+#include "Graphics/Renderer.h"
+#include "Graphics/Shaders.hpp"
 
-typedef glm::vec2 vec2;
-
-GLFWwindow* mWindow;
+Renderer* mRenderer;
+GraphicsContext* mContext;
 GLuint mVa, mIb, mVb, mShader;
-glm::mat4 mProjectionMatrix;
-vec2 mMousePosition;
-vec2 mPlayerPosition;
+Vector2 mMousePosition;
+Vector2 mPlayerPosition;
 float mPlayerMovementRate = 3.0f;
 float mShiftMultiplier = 3.0f;
 double mDeltaTime = 0;
@@ -38,12 +32,12 @@ public:
 struct Vertex
 {
 public:
-	vec2 Position;
-	vec2 TextureCoordinates;
+	Vector2 Position;
+	Vector2 TextureCoordinates;
 	const static Layout Layouts[];
 
 public:
-	Vertex(vec2 position, vec2 textureCoordinates)
+	Vertex(Vector2 position, Vector2 textureCoordinates)
 		: Position(position), TextureCoordinates(textureCoordinates) {}
 	Vertex(float positionX, float positionY, float textureCoordinateX, float textureCoordinateY)
 		: Position({positionX, positionY}), TextureCoordinates({textureCoordinateX, textureCoordinateY}) {}
@@ -71,15 +65,20 @@ public:
 	}
 };
 
-void DrawQuad(vec2 size, vec2 position)
+void DrawQuad(Vector2 size, Vector2 position, Color color)
 {	
 	GLCall(glUseProgram(mShader));
 	GLCall(glBindVertexArray(mVa));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
 
-	GLCall(glUniformMatrix4fv(GetUniformLocation(mShader, "uProjection"), 1, GL_FALSE, &mProjectionMatrix[0][0]));
-	GLCall(glUniform2f(GetUniformLocation(mShader, "uPosition"), position.x, position.y));
-	GLCall(glUniform2f(GetUniformLocation(mShader, "uSize"), size.x, size.y));
+	glm::mat4 transformation(1.0f);
+	transformation *= glm::translate(transformation, Vector3(position, 0));
+	transformation *= glm::toMat4(glm::quat(glm::radians(Vector3(0))));
+	transformation *= glm::scale(transformation, Vector3(size, 1));
+	glm::mat4 mp = mRenderer->ProjectionMatrix * transformation;
+
+	GLCall(glUniformMatrix4fv(GetUniformLocation(mShader, "u_MP"), 1, GL_FALSE, &mp[0][0]));
+	GLCall(glUniform4f(GetUniformLocation(mShader, "u_Color"), color.r, color.g, color.b, color.a));
 
 	GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
@@ -90,88 +89,34 @@ void DrawQuad(vec2 size, vec2 position)
 
 void Render()
 {
-	GLCall(glClear(GL_COLOR_BUFFER_BIT));
-	GLCall(glClearColor(0.3f, 0.3f, 0.4f, 1.0f));
+	mRenderer->Clear(Color(0.3f, 0.3f, 0.4f, 1.0f));
 
-	DrawQuad({100, 100}, mPlayerPosition);
+	DrawQuad({100, 100}, Vector2(1280.0f / 2, 720.0f / 2), Color(0.5f, 0.2f, 0.2f, 0.0f));
+	DrawQuad({100, 100}, mPlayerPosition, Color(0.2f, 0.2f, 0.5f, 0.0f));
 
-	glfwSwapBuffers(mWindow);
+	mRenderer->FinishFrame();
 }
 
 void PollInput()
 {
-	glfwPollEvents();
+	mContext->UpdateInput();
 
-	double mouseX, mouseY;
-	glfwGetCursorPos(mWindow, &mouseX, &mouseY);
-	mMousePosition = {mouseX, mouseY};
+	mMousePosition = mContext->GetMousePosition();
 
 	float currentMultiplier = 1.0f;
 
-	if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE
-		|| glfwGetKey(mWindow, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) currentMultiplier = mShiftMultiplier;
+	if (mContext->GetKeyDown(GLFW_KEY_RIGHT_SHIFT) || mContext->GetKeyDown(GLFW_KEY_LEFT_SHIFT))
+		currentMultiplier = mShiftMultiplier;
 	else currentMultiplier = 1.0f;
-	if (glfwGetKey(mWindow, GLFW_KEY_W) != GLFW_RELEASE) mPlayerPosition.y += mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_S) != GLFW_RELEASE) mPlayerPosition.y -= mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_D) != GLFW_RELEASE) mPlayerPosition.x += mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_A) != GLFW_RELEASE) mPlayerPosition.x -= mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) != GLFW_RELEASE) glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+	if (mContext->GetKeyDown(GLFW_KEY_W)) mPlayerPosition.y += mPlayerMovementRate * currentMultiplier;
+	if (mContext->GetKeyDown(GLFW_KEY_S)) mPlayerPosition.y -= mPlayerMovementRate * currentMultiplier;
+	if (mContext->GetKeyDown(GLFW_KEY_D)) mPlayerPosition.x += mPlayerMovementRate * currentMultiplier;
+	if (mContext->GetKeyDown(GLFW_KEY_A)) mPlayerPosition.x -= mPlayerMovementRate * currentMultiplier;
+	if (mContext->GetKey(GLFW_KEY_ESCAPE)) mContext->CloseWindow();
 }
 
 void UpdateLogic()
 {
-	static double previousTime = 0;
-	double currentTime = glfwGetTime(); 
-	mDeltaTime = currentTime - previousTime;
-	previousTime = currentTime;
-}
-
-void OnFramebufferChanged(GLFWwindow* window, int width, int height)
-{
-	mProjectionMatrix = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
-	GLCall(glViewport(0, 0, width, height));
-}
-
-int InitializeGraphics()
-{
-	if (!glfwInit()) return -1;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	mWindow = glfwCreateWindow(1280, 720, "cpp-game", NULL, NULL);
-	if (!mWindow)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(mWindow);
-
-	auto error = glewInit();
-	if (error != GLEW_OK)
-	{
-		std::cout << glewGetErrorString(error) << std::endl;
-		return - 1;
-	}
-	printf("GL version: %s\n", glGetString(GL_VERSION));
-
-	int currentWidth, currentHeight;
-	glfwGetFramebufferSize(mWindow, &currentWidth, &currentHeight);
-	OnFramebufferChanged(mWindow, currentWidth, currentHeight);
-	glfwSetFramebufferSizeCallback(mWindow, OnFramebufferChanged);
-
-	// glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	if (glfwRawMouseMotionSupported()) glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-	glfwSwapInterval(1);
-
-	GLCall(glFrontFace(GL_CW));
-	GLCall(glCullFace(GL_BACK));
-	GLCall(glEnable(GL_CULL_FACE));
-
-	return 1;
 }
 
 void InitializeGraphicsObjects()
@@ -234,21 +179,18 @@ void DeinitializeGraphicsObjects()
 	GLCall(glDeleteVertexArrays(1, &mVa));
 }
 
-void DeinitializeGraphics()
-{
-	glfwDestroyWindow(mWindow);
-	glfwTerminate();
-}
-
 int main()
 {
-	int successCode = InitializeGraphics();
+	mRenderer = new Renderer();
+	int successCode = mRenderer->InitializeGraphics(Vector2(1280, 720), "cpp-game");
 	if (successCode != 1) return successCode;
+
+	mContext = mRenderer->Context();
 
 	CreateGraphicsObjects();
 	InitializeGraphicsObjects();
 
-	while (!glfwWindowShouldClose(mWindow))
+	while (!mContext->ShouldWindowClose())
 	{
 		Render();
 		PollInput();
@@ -256,6 +198,8 @@ int main()
 	}
 
 	DeinitializeGraphicsObjects();
-	DeinitializeGraphics();
+	mRenderer->DeinitializeGraphics();
+	
+	delete mRenderer;
 	return 0;
 }
