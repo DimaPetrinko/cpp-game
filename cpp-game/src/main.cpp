@@ -1,28 +1,85 @@
 #include <iostream>
+#include <bits/stdc++.h> 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "GL.h"
 #include "Shaders.hpp"
 
+typedef glm::vec2 vec2;
+
 GLFWwindow* mWindow;
 GLuint mVa, mIb, mVb, mShader;
 glm::mat4 mProjectionMatrix;
-double mMouseX = 0, mMouseY = 0;
-float mPlayerX = 0, mPlayerY = 0;
+vec2 mMousePosition;
+vec2 mPlayerPosition;
 float mPlayerMovementRate = 3.0f;
 float mShiftMultiplier = 3.0f;
 double mDeltaTime = 0;
 
-void DrawQuad(float width, float height, float x, float y)
+struct Layout
+{
+public:
+	int Id;
+	int ElementCount;
+	int Type;
+	int Normalize;
+	int VertexSize;
+	int Offset;
+
+public:
+	Layout(int id, int elementCount, int type, int normalize, int vertexSize, int offset)
+		: Id(id), ElementCount(elementCount), Type(type), Normalize(normalize),
+			VertexSize(vertexSize), Offset(offset) {}
+	~Layout() {}
+};
+
+struct Vertex
+{
+public:
+	vec2 Position;
+	vec2 TextureCoordinates;
+	const static Layout Layouts[];
+
+public:
+	Vertex(vec2 position, vec2 textureCoordinates)
+		: Position(position), TextureCoordinates(textureCoordinates) {}
+	Vertex(float positionX, float positionY, float textureCoordinateX, float textureCoordinateY)
+		: Position({positionX, positionY}), TextureCoordinates({textureCoordinateX, textureCoordinateY}) {}
+};
+
+const Layout Vertex::Layouts[] = {Layout(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0),
+		Layout(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 2 * sizeof(float))};
+
+class Mesh
+{
+public:
+	Vertex* Vertices;
+	int VerticesCount;
+	int* Indices;
+	int IndicesCount;
+
+public:
+	Mesh(Vertex* vertices, int verticesCount, int* indices, int indicesCount)
+		: Vertices(vertices), VerticesCount(verticesCount),
+			Indices(indices), IndicesCount(indicesCount) {}
+	~Mesh()
+	{
+		delete[] Vertices;
+		delete[] Indices;
+	}
+};
+
+void DrawQuad(vec2 size, vec2 position)
 {	
 	GLCall(glUseProgram(mShader));
 	GLCall(glBindVertexArray(mVa));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
 
 	GLCall(glUniformMatrix4fv(GetUniformLocation(mShader, "uProjection"), 1, GL_FALSE, &mProjectionMatrix[0][0]));
-	GLCall(glUniform2f(GetUniformLocation(mShader, "uPosition"), x, y));
-	GLCall(glUniform2f(GetUniformLocation(mShader, "uSize"), width, height));
+	GLCall(glUniform2f(GetUniformLocation(mShader, "uPosition"), position.x, position.y));
+	GLCall(glUniform2f(GetUniformLocation(mShader, "uSize"), size.x, size.y));
 
 	GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
@@ -34,8 +91,9 @@ void DrawQuad(float width, float height, float x, float y)
 void Render()
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	GLCall(glClearColor(0.3f, 0.3f, 0.4f, 1.0f));
 
-	DrawQuad(100, 100, mPlayerX, mPlayerY);
+	DrawQuad({100, 100}, mPlayerPosition);
 
 	glfwSwapBuffers(mWindow);
 }
@@ -44,17 +102,19 @@ void PollInput()
 {
 	glfwPollEvents();
 
-	glfwGetCursorPos(mWindow, &mMouseX, &mMouseY);
+	double mouseX, mouseY;
+	glfwGetCursorPos(mWindow, &mouseX, &mouseY);
+	mMousePosition = {mouseX, mouseY};
 
 	float currentMultiplier = 1.0f;
 
 	if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE
 		|| glfwGetKey(mWindow, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) currentMultiplier = mShiftMultiplier;
 	else currentMultiplier = 1.0f;
-	if (glfwGetKey(mWindow, GLFW_KEY_W) != GLFW_RELEASE) mPlayerY += mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_S) != GLFW_RELEASE) mPlayerY -= mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_D) != GLFW_RELEASE) mPlayerX += mPlayerMovementRate * currentMultiplier;
-	if (glfwGetKey(mWindow, GLFW_KEY_A) != GLFW_RELEASE) mPlayerX -= mPlayerMovementRate * currentMultiplier;
+	if (glfwGetKey(mWindow, GLFW_KEY_W) != GLFW_RELEASE) mPlayerPosition.y += mPlayerMovementRate * currentMultiplier;
+	if (glfwGetKey(mWindow, GLFW_KEY_S) != GLFW_RELEASE) mPlayerPosition.y -= mPlayerMovementRate * currentMultiplier;
+	if (glfwGetKey(mWindow, GLFW_KEY_D) != GLFW_RELEASE) mPlayerPosition.x += mPlayerMovementRate * currentMultiplier;
+	if (glfwGetKey(mWindow, GLFW_KEY_A) != GLFW_RELEASE) mPlayerPosition.x -= mPlayerMovementRate * currentMultiplier;
 	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) != GLFW_RELEASE) glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
 }
 
@@ -121,26 +181,28 @@ void InitializeGraphicsObjects()
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, mVb));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
 
-	float vertices[] = 
+	Vertex vertices[] = 
 	{
-		-0.5f, 0.5f,
-		0.5f, 0.5f,
-		0.5f, -0.5f,
-		-0.5f, -0.5f
+		{-0.5f, -0.5f, 0.0f, 0.0f},
+		{-0.5f, 0.5f, 0.0f, 1.0f},
+		{0.5f, 0.5f, 1.0f, 1.0f},
+		{0.5f, -0.5f, 1.0f, 0.0f},
 	};
 	const size_t verticesCount = 4;
-	const size_t elementsPerVertex = 2;
-	unsigned int indices[] = {0, 1, 3, 3, 1, 2};
+
+	unsigned int indices[] = {0, 1, 2, 0, 2, 3};
 	const size_t indicesCount = 6;
 
-	GLCall(glBufferData(GL_ARRAY_BUFFER, verticesCount * elementsPerVertex * sizeof(float),
-		vertices, GL_DYNAMIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int),
-		indices, GL_DYNAMIC_DRAW));
+		indices, GL_STATIC_DRAW));
 
-	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glVertexAttribPointer(0, elementsPerVertex, GL_FLOAT, GL_FALSE,
-		elementsPerVertex * sizeof(float), 0));
+	for (auto &&l : Vertex::Layouts)
+	{
+		GLCall(glEnableVertexAttribArray(l.Id));
+		GLCall(glVertexAttribPointer(l.Id, l.ElementCount, l.Type,
+			l.Normalize, l.VertexSize, (const void*)l.Offset));
+	}
 
 	GLCall(glBindVertexArray(0));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
