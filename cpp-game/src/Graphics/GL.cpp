@@ -1,13 +1,15 @@
 #include "GL.h"
-
-void GLClearError() { while (glGetError() != GL_NO_ERROR); }
-
-bool GLLogCall(const char* function, const char* file, int line)
+namespace Graphics
 {
-	while (auto error = glGetError())
+	void GLClearError() { while (glGetError() != GL_NO_ERROR); }
+
+	bool GLLogCall(const char* function, const char* file, int line)
 	{
-		std::cout << "[OpenGL] " << error << " in " << function << " " << file << ":" << line << std::endl;
-		return false;
+		while (auto error = glGetError())
+		{
+			std::cout << "[OpenGL] " << error << " in " << function << " " << file << ":" << line << std::endl;
+			return false;
+		}
+		return true;
 	}
-	return true;
 }

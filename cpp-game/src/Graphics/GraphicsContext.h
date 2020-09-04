@@ -2,22 +2,25 @@
 
 #include "Graphics/GL.h"
 
-class GraphicsContext
+namespace Graphics
 {
-private:
-	GLFWwindow* mWindow;
-public:
-	GraphicsContext(GLFWwindow* window);
-	~GraphicsContext();
-	GLFWwindow* Window();
-	bool ShouldWindowClose();
-	void CloseWindow();
-	void CancelCloseWindow();
-	void InitializeWindowResizing();
-	void InitializeInput();
-	void UpdateInput();
-	bool GetKey(int key);
-	bool GetKeyDown(int key);
-	int GetKeyState(int key);
-	Vector2 GetMousePosition();
-};
+	class GraphicsContext
+	{
+	private:
+		GLFWwindow* mWindow;
+	public:
+		GraphicsContext(GLFWwindow* window);
+		~GraphicsContext();
+		GLFWwindow* Window();
+		bool ShouldWindowClose();
+		void CloseWindow();
+		void CancelCloseWindow();
+		void InitializeWindowResizing();
+		void InitializeInput();
+		void UpdateInput();
+		bool GetKey(int key);
+		bool GetKeyDown(int key);
+		int GetKeyState(int key);
+		vec2 GetMousePosition();
+	};
+}
