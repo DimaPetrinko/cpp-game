@@ -1,5 +1,6 @@
 #include "Renderer.h"
-#include "Shaders.hpp"
+#include "Graphics/Shaders.hpp"
+#include "Utilities/ReturnCodes.h"
 
 namespace Graphics
 {
@@ -28,14 +29,14 @@ namespace Graphics
 
 	bool Renderer::InitializeGraphics(vec2 size, const std::string&& title)
 	{
-		if (!InitializeContext()) return -1;
+		if (!InitializeContext()) return RETURN_CODE_ERROR;
 		
 		GLFWwindow* window = CreateWindow(size, std::move(title));
-		if (!window) return -1;
+		if (!window) return RETURN_CODE_ERROR;
 		
 		mContext = GraphicsContext(window);
 
-		if (InitializeGraphicsLibrary()) return -1;
+		if (InitializeGraphicsLibrary()) return RETURN_CODE_ERROR;
 		printf("GL version: %s\n", glGetString(GL_VERSION));
 
 		ConfigureMiscelaneousParameters();
@@ -47,7 +48,7 @@ namespace Graphics
 		InitializeGraphicsObjects();
 
 		mInitialized = true;
-		return 1;
+		return RETURN_CODE_RUNNING;
 	}
 
 	bool Renderer::InitializeContext()

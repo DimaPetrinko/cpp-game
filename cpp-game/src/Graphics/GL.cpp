@@ -1,4 +1,5 @@
 #include "GL.h"
+
 namespace Graphics
 {
 	void GLClearError() { while (glGetError() != GL_NO_ERROR); }

@@ -2,7 +2,7 @@
 
 #include "Graphics/GL.h"
 #include "Graphics/GraphicsContext.h"
-#include "GrahicsStructs.h"
+#include "Graphics/GrahicsStructs.h"
 
 namespace Graphics
 {

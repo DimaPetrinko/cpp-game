@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GL.h"
+#include "Graphics/GL.h"
 
 namespace Graphics
 {
