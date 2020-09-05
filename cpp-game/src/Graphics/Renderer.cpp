@@ -1,12 +1,11 @@
 #include "Renderer.h"
-#include "GrahicsStructs.hpp"
 #include "Shaders.hpp"
 
 namespace Graphics
 {
 	Renderer* Renderer::sInstance{};
 
-	Renderer::Renderer() : ProjectionMatrix(), mContext(nullptr)
+	Renderer::Renderer() : ProjectionMatrix(), mContext(nullptr), mDefaultQuad()
 	{
 		if (sInstance) delete sInstance;
 		sInstance = this;
@@ -14,7 +13,7 @@ namespace Graphics
 
 	Renderer::~Renderer()
 	{
-		DeinitializeGraphics();
+		if (mInitialized) DeinitializeGraphics();
 	}
 
 	Renderer* Renderer::Instance()
@@ -47,6 +46,7 @@ namespace Graphics
 		CreateGraphicsObjects();
 		InitializeGraphicsObjects();
 
+		mInitialized = true;
 		return 1;
 	}
 
@@ -91,6 +91,7 @@ namespace Graphics
 
 	void Renderer::DeinitializeGraphics()
 	{
+		mInitialized = false;
 		DestroyGraphicsObjects();
 
 		glfwDestroyWindow(mContext.Window());
@@ -129,6 +130,25 @@ namespace Graphics
 		GLCall(glGenVertexArrays(1, &mVa));
 	}
 
+	Mesh* Renderer::CreateDefaultQuad()
+	{
+		const size_t verticesCount = 4;
+		Vertex* vertices = new Vertex[verticesCount]
+		{
+			{-0.5f, -0.5f, 0.0f, 0.0f},
+			{-0.5f, 0.5f, 0.0f, 1.0f},
+			{0.5f, 0.5f, 1.0f, 1.0f},
+			{0.5f, -0.5f, 1.0f, 0.0f},
+		};
+
+		const size_t indicesCount = 6;
+		unsigned int* indices = new unsigned int[indicesCount] {0, 1, 2, 0, 2, 3};
+
+		Mesh* mesh = new Mesh(vertices, verticesCount, indices, indicesCount);
+
+		return mesh;
+	}
+
 	void Renderer::InitializeGraphicsObjects()
 	{
 		GLCall(glUseProgram(mShader));
@@ -136,21 +156,12 @@ namespace Graphics
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, mVb));
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
 
-		Vertex vertices[] = 
-		{
-			{-0.5f, -0.5f, 0.0f, 0.0f},
-			{-0.5f, 0.5f, 0.0f, 1.0f},
-			{0.5f, 0.5f, 1.0f, 1.0f},
-			{0.5f, -0.5f, 1.0f, 0.0f},
-		};
-		const size_t verticesCount = 4;
-
-		unsigned int indices[] = {0, 1, 2, 0, 2, 3};
-		const size_t indicesCount = 6;
-
-		GLCall(glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int),
-			indices, GL_STATIC_DRAW));
+		mDefaultQuad = CreateDefaultQuad();
+		
+		GLCall(glBufferData(GL_ARRAY_BUFFER, mDefaultQuad->VerticesCount * sizeof(Vertex),
+			mDefaultQuad->Vertices, GL_STATIC_DRAW));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, mDefaultQuad->IndicesCount * sizeof(unsigned int),
+			mDefaultQuad->Indices, GL_STATIC_DRAW));
 
 		for (auto &&l : Vertex::Layouts)
 		{
@@ -171,6 +182,8 @@ namespace Graphics
 		GLCall(glDeleteBuffers(1, &mVb));
 		GLCall(glDeleteBuffers(1, &mIb));
 		GLCall(glDeleteVertexArrays(1, &mVa));
+
+		delete mDefaultQuad;
 	}
 
 	void Renderer::DrawQuad(vec2 size, vec2 position, Color color)

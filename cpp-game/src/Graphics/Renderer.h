@@ -2,6 +2,7 @@
 
 #include "Graphics/GL.h"
 #include "Graphics/GraphicsContext.h"
+#include "GrahicsStructs.h"
 
 namespace Graphics
 {
@@ -14,7 +15,9 @@ namespace Graphics
 	private:
 		static Renderer* sInstance;
 		GraphicsContext mContext;
+		Mesh* mDefaultQuad;
 		GLuint mVa, mIb, mVb, mShader;
+		bool mInitialized;
 
 	public:
 		Renderer();
@@ -30,6 +33,7 @@ namespace Graphics
 		void FinishFrame();
 
 		void CreateGraphicsObjects();
+		Mesh* CreateDefaultQuad();
 		void InitializeGraphicsObjects();
 		void DestroyGraphicsObjects();
 		void DrawQuad(vec2 size, vec2 position, Color color);
