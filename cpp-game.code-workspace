@@ -57,7 +57,11 @@
 			"ctime": "cpp",
 			"ratio": "cpp",
 			"iomanip": "cpp",
-			"bit": "cpp"
+			"bit": "cpp",
+			"any": "cpp",
+			"future": "cpp",
+			"valarray": "cpp",
+			"variant": "cpp"
 		}
 	}
 }

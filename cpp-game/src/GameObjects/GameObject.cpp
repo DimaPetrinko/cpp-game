@@ -6,5 +6,4 @@ namespace GameObjects
 		: Name(name), SpriteColor(color), Position(0, 0), Size(1,1) {}
 		
 	GameObject::~GameObject() {}
-
 }

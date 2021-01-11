@@ -10,6 +10,7 @@ int main()
 	
 	ReturnCode returnCode = game->Run();
 
+	game->Shutdown();
 	delete game;
 	return returnCode;
 }

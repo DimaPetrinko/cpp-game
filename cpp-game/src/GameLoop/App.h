@@ -12,12 +12,17 @@ namespace GameLoop
 		Graphics::Renderer* mRenderer;
 		Graphics::GraphicsContext* mContext;
 		ReturnCode mReturnCode;
+	private:
+		bool mRendererCreated;
+		bool mGraphicsInitialized;
+		bool mInitPerformed;
 
 	public:
 		App(vec2 size, const std::string&& title);
 		virtual ~App();
 
 		ReturnCode Run();
+		void Shutdown();
 
 	protected:
 		virtual void Init() = 0;

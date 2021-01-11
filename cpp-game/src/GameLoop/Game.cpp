@@ -36,6 +36,7 @@ namespace GameLoop
 		if (mContext->GetKeyDown(GLFW_KEY_S)) inputVector.y = -1;
 		if (mContext->GetKeyDown(GLFW_KEY_D)) inputVector.x = 1;
 		if (mContext->GetKeyDown(GLFW_KEY_A)) inputVector.x = -1;
+		if (mContext->GetKeyDown(GLFW_KEY_DELETE)) mReturnCode = RETURN_CODE_ERROR;
 
 		mPlayer->Move(glm::length2(inputVector) < 0.01f ? inputVector : glm::normalize(inputVector));
 	}
