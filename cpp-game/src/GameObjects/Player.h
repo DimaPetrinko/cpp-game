@@ -14,7 +14,7 @@ namespace GameObjects
 
 	public:
 		Player();
-		Player(const std::string&& name, Color color);
+		Player(const std::string&& name);
 		~Player();
 
 		void Update() override;

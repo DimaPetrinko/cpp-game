@@ -1,5 +1,6 @@
+#include <typeinfo>
 #include "Game.h"
-#include "GameObjects/StaticObject.h"
+#include "GameObjects/Components/QuadRenderer.h"
 
 namespace GameLoop
 {
@@ -9,16 +10,20 @@ namespace GameLoop
 
 	void Game::Init()
 	{
-		mPlayer = new GameObjects::Player("Player", Color(0.2f, 0.2f, 0.5f, 1.0f));
-		mPlayer->Size = {100, 100};
-		mPlayer->Position = vec2(1280.0f / 2, 720.0f / 2);
+		mPlayer = new GameObjects::Player("Player");
+		mPlayer->AddComponent(new GameObjects::QuadRenderer(mPlayer, Color(0.2f, 0.2f, 0.5f, 1.0f)));
+		mPlayer->GetTransform()->SetSize({100, 100});
+		mPlayer->GetTransform()->SetPosition(vec2(1280.0f / 2, 720.0f / 2));
 
-		GameObjects::StaticObject* other = new GameObjects::StaticObject("Other", Color(0.5f, 0.2f, 0.2f, 1.0f));
-		other->Size = {50, 50};
-		other->Position = vec2(1280.0f / 2, 720.0f / 2);
+		GameObjects::GameObject* other = new GameObjects::GameObject("Other");
+		other->AddComponent(new GameObjects::QuadRenderer(other, Color(0.5f, 0.2f, 0.2f, 1.0f)));
+		other->GetTransform()->SetSize({50, 50});
+		other->GetTransform()->SetPosition(vec2(1280.0f / 2, 720.0f / 2));
 		
 		mGameObjects.push_back(other);
 		mGameObjects.push_back(mPlayer);
+		mObjectRenderers.push_back(other->GetRenderer());
+		mObjectRenderers.push_back(mPlayer->GetRenderer());
 	}
 
 	void Game::UpdateInput()
@@ -53,9 +58,9 @@ namespace GameLoop
 	{
 		mRenderer->Clear(Color(0.3f, 0.3f, 0.4f, 1.0f));
 
-		for (auto &&go : mGameObjects)
+		for (auto &&r : mObjectRenderers)
 		{
-			mRenderer->DrawQuad(go->Size, go->Position, go->SpriteColor);
+			r->Render(mRenderer);
 		}
 
 		mRenderer->FinishFrame();
@@ -69,5 +74,6 @@ namespace GameLoop
 		}
 
 		mGameObjects.clear();
+		mObjectRenderers.clear();
 	}
 }

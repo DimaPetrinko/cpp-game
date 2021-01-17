@@ -11,8 +11,8 @@ namespace GameObjects
 		vec2 Velocity;
 
 	public:	
-		DynamicObject(const std::string&& name, Color color);
-		virtual ~DynamicObject();
+		DynamicObject(const std::string&& name);
+		~DynamicObject();
 
 		void Update() override;
 

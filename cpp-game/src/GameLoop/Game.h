@@ -12,6 +12,7 @@ namespace GameLoop
 	{
 	private:
 		std::vector<GameObjects::GameObject*> mGameObjects;
+		std::vector<GameObjects::Renderer*> mObjectRenderers;
 		GameObjects::Player* mPlayer;
 		vec2 mMousePosition;
 

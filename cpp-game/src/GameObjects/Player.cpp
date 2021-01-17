@@ -2,9 +2,9 @@
 
 namespace GameObjects
 {
-	Player::Player() : Player("Player", Color(1,1,1,1)) {}
+	Player::Player() : Player("Player") {}
 
-	Player::Player(const std::string&& name, Color color) : DynamicObject(std::move(name),color) {}
+	Player::Player(const std::string&& name) : DynamicObject(std::move(name)) {}
 	
 	Player::~Player() {}
 

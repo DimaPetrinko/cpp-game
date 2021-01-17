@@ -2,7 +2,7 @@
 
 namespace GameObjects
 {
-	DynamicObject::DynamicObject(const std::string&& name, Color color) : GameObject(std::move(name), color) {}
+	DynamicObject::DynamicObject(const std::string&& name) : GameObject(std::move(name)), Velocity(0,0) {}
 	
 	DynamicObject::~DynamicObject() {}
 
@@ -14,7 +14,9 @@ namespace GameObjects
 
 	void DynamicObject::Move(vec2 delta)
 	{
-		Position += delta;
+		vec2 pos = mTransform->GetPosition();
+		pos += delta;
+		mTransform->SetPosition(pos);
 	}
 
 	const vec2 DynamicObject::Gravity = vec2(0,-0.1f);
