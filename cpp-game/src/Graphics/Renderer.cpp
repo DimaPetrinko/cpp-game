@@ -85,9 +85,9 @@ namespace Graphics
 
 	void Renderer::ConfigureMiscelaneousParameters()
 	{
-		GLCall(glFrontFace(GL_CW));
-		GLCall(glCullFace(GL_BACK));
-		GLCall(glEnable(GL_CULL_FACE));
+		glFrontFace(GL_CW);
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
 	}
 
 	void Renderer::DeinitializeGraphics()
@@ -101,8 +101,8 @@ namespace Graphics
 
 	void Renderer::Clear(Color color)
 	{
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
-		GLCall(glClearColor(color.r, color.g, color.b, color.a));
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
 	void Renderer::FinishFrame()
@@ -126,9 +126,9 @@ namespace Graphics
 			delete data;
 		}
 
-		GLCall(glGenBuffers(1, &mVb));
-		GLCall(glGenBuffers(1, &mIb));
-		GLCall(glGenVertexArrays(1, &mVa));
+		glGenBuffers(1, &mVb);
+		glGenBuffers(1, &mIb);
+		glGenVertexArrays(1, &mVa);
 	}
 
 	Mesh* Renderer::CreateDefaultQuad()
@@ -152,46 +152,46 @@ namespace Graphics
 
 	void Renderer::InitializeGraphicsObjects()
 	{
-		GLCall(glUseProgram(mShader));
-		GLCall(glBindVertexArray(mVa));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, mVb));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
+		glUseProgram(mShader);
+		glBindVertexArray(mVa);
+		glBindBuffer(GL_ARRAY_BUFFER, mVb);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb);
 
 		mDefaultQuad = CreateDefaultQuad();
 		
-		GLCall(glBufferData(GL_ARRAY_BUFFER, mDefaultQuad->VerticesCount * sizeof(Vertex),
-			mDefaultQuad->Vertices, GL_STATIC_DRAW));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, mDefaultQuad->IndicesCount * sizeof(unsigned int),
-			mDefaultQuad->Indices, GL_STATIC_DRAW));
+		glBufferData(GL_ARRAY_BUFFER, mDefaultQuad->VerticesCount * sizeof(Vertex),
+			mDefaultQuad->Vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mDefaultQuad->IndicesCount * sizeof(unsigned int),
+			mDefaultQuad->Indices, GL_STATIC_DRAW);
 
 		for (auto &&l : Vertex::Layouts)
 		{
-			GLCall(glEnableVertexAttribArray(l.Id));
-			GLCall(glVertexAttribPointer(l.Id, l.ElementCount, l.Type,
-				l.Normalize, l.VertexSize, (const void*)l.Offset));
+			glEnableVertexAttribArray(l.Id);
+			glVertexAttribPointer(l.Id, l.ElementCount, l.Type,
+				l.Normalize, l.VertexSize, (const void*)l.Offset);
 		}
 
-		GLCall(glBindVertexArray(0));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-		GLCall(glUseProgram(0));
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glUseProgram(0);
 	}
 
 	void Renderer::DestroyGraphicsObjects()
 	{
-		GLCall(glDeleteProgram(mShader));
-		GLCall(glDeleteBuffers(1, &mVb));
-		GLCall(glDeleteBuffers(1, &mIb));
-		GLCall(glDeleteVertexArrays(1, &mVa));
+		glDeleteProgram(mShader);
+		glDeleteBuffers(1, &mVb);
+		glDeleteBuffers(1, &mIb);
+		glDeleteVertexArrays(1, &mVa);
 
 		delete mDefaultQuad;
 	}
 
 	void Renderer::DrawQuad(vec2 size, vec2 position, Color color)
 	{	
-		GLCall(glUseProgram(mShader));
-		GLCall(glBindVertexArray(mVa));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb));
+		glUseProgram(mShader);
+		glBindVertexArray(mVa);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIb);
 
 		glm::mat4 transformation(1.0f);
 		transformation *= glm::translate(transformation, Vector3(position, 0));
@@ -199,13 +199,13 @@ namespace Graphics
 		transformation *= glm::scale(transformation, Vector3(size, 1));
 		glm::mat4 mp = ProjectionMatrix * transformation;
 
-		GLCall(glUniformMatrix4fv(Shaders::GetUniformLocation(mShader, "u_MP"), 1, GL_FALSE, &mp[0][0]));
-		GLCall(glUniform4f(Shaders::GetUniformLocation(mShader, "u_Color"), color.r, color.g, color.b, color.a));
+		glUniformMatrix4fv(Shaders::GetUniformLocation(mShader, "u_MP"), 1, GL_FALSE, &mp[0][0]);
+		glUniform4f(Shaders::GetUniformLocation(mShader, "u_Color"), color.r, color.g, color.b, color.a);
 
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-		GLCall(glBindVertexArray(0));
-		GLCall(glUseProgram(0));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		glUseProgram(0);
 	}
 }

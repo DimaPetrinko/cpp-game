@@ -9,7 +9,7 @@ namespace Graphics::Shaders
 {
 	const unsigned int GetUniformLocation(unsigned int shader, const std::string& name)
 	{
-		GLCall(int location = glGetUniformLocation(shader, name.c_str()));
+		int location = glGetUniformLocation(shader, name.c_str());
 		if (location == -1) std::cout << "Uniform " << name << " doesn't exist\n";
 		return location;
 	}
@@ -49,21 +49,21 @@ namespace Graphics::Shaders
 
 	unsigned int CompileShader(unsigned int type, const std::string& source)
 	{
-		GLCall(unsigned int id = glCreateShader(type));
+		unsigned int id = glCreateShader(type);
 		const char* src = source.c_str();
-		GLCall(glShaderSource(id, 1, &src, nullptr));
-		GLCall(glCompileShader(id));
+		glShaderSource(id, 1, &src, nullptr);
+		glCompileShader(id);
 
 		int result;
-		GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE)
 		{
 			int length;
-			GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = (char*)alloca(length * sizeof(char));
-			GLCall(glGetShaderInfoLog(id, length, &length, message));
+			glGetShaderInfoLog(id, length, &length, message);
 			printf("Failed to compile shader! %s\n", message);
-			GLCall(glDeleteShader(id));
+			glDeleteShader(id);
 			return 0;
 		}
 
@@ -72,16 +72,16 @@ namespace Graphics::Shaders
 
 	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		GLCall(unsigned int program = glCreateProgram());
+		unsigned int program = glCreateProgram();
 		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-		GLCall(glAttachShader(program, vs));
-		GLCall(glAttachShader(program, fs));
-		GLCall(glLinkProgram(program));
-		GLCall(glValidateProgram(program));
+		glAttachShader(program, vs);
+		glAttachShader(program, fs);
+		glLinkProgram(program);
+		glValidateProgram(program);
 
-		GLCall(glDeleteShader(vs));
-		GLCall(glDeleteShader(fs));
+		glDeleteShader(vs);
+		glDeleteShader(fs);
 
 		return program;
 	}

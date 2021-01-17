@@ -7,7 +7,7 @@ namespace Graphics
 	{
 		if (!Renderer::Instance()) return;
 		Renderer::Instance()->ProjectionMatrix = glm::ortho(0.0f, (float)width * 2, 0.0f, (float)height * 2);
-		GLCall(glViewport(0, 0, width, height));
+		glViewport(0, 0, width, height);
 	}
 
 	GraphicsContext::GraphicsContext(GLFWwindow* window) : mWindow(window) {}

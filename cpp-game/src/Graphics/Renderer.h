@@ -36,6 +36,7 @@ namespace Graphics
 		Mesh* CreateDefaultQuad();
 		void InitializeGraphicsObjects();
 		void DestroyGraphicsObjects();
+
 		void DrawQuad(vec2 size, vec2 position, Color color);
 
 	private:
