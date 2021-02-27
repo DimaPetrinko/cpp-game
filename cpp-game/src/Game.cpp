@@ -29,7 +29,7 @@ int Game::InitializeGraphics()
 {
 	if (!glfwInit()) return -1;
 
-	mWindow = glfwCreateWindow(640, 480, "Hello CMake", NULL, NULL);
+	mWindow = glfwCreateWindow(640, 480, "cpp-game", NULL, NULL);
 
 	if (!mWindow)
 	{
