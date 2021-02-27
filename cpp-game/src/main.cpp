@@ -1,16 +1,10 @@
 #include <iostream>
-#include "Utilities/Vectors.h"
-#include "Utilities/ReturnCodes.h"
-#include "GameLoop/App.h"
-#include "GameLoop/Game.h"
+#include "Game.h"
 
 int main()
 {
-	GameLoop::App* game = new GameLoop::Game(vec2(1280, 720), "cpp-game");
-	
-	ReturnCode returnCode = game->Run();
-
-	game->Shutdown();
+	Game* game = new Game();
+	int returnCode = game->Run();
 	delete game;
 	return returnCode;
 }

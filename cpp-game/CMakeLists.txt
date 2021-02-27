@@ -1,0 +1,39 @@
+set(INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install/${CMAKE_BUILD_TYPE})
+set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
+set(EXTERNAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+	set(CURRENT_LIB_DIR ${LIB_DIR}/Win64)
+elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
+	set(CURRENT_LIB_DIR ${LIB_DIR}/Linux64)
+endif()
+
+file(GLOB_RECURSE SOURCES ${SOURCES_DIR}/*.cpp)
+file(GLOB_RECURSE HEADERS ${SOURCES_DIR}/*.h)
+
+message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
+message("INSTALL_DIR: " ${INSTALL_DIR})
+message("SOURCES_DIR: " ${SOURCES_DIR})
+message("RESOURCES_DIR: " ${RESOURCES_DIR})
+message("EXTERNAL_INCLUDE_DIR: " ${EXTERNAL_INCLUDE_DIR})
+message("CURRENT_LIB_DIR: " ${CURRENT_LIB_DIR})
+message("SOURCES:" ${SOURCES})
+message("HEADERS:" ${HEADERS})
+
+add_executable(cpp-game ${SOURCES} ${HEADERS})
+
+set_target_properties(
+	cpp-game PROPERTIES
+	CXX_STANDARD 11
+	CXX_STANDARD_REQUIRED ON
+)
+
+target_include_directories(cpp-game PRIVATE ${EXTERNAL_INCLUDE_DIR})
+target_include_directories(cpp-game PRIVATE ${SOURCES_DIR})
+target_link_directories(cpp-game PRIVATE ${CURRENT_LIB_DIR})
+target_link_libraries(cpp-game -lglfw -lGLEW -lGL)
+
+install(TARGETS cpp-game DESTINATION ${INSTALL_DIR})
+install(DIRECTORY ${RESOURCES_DIR} DESTINATION ${INSTALL_DIR})

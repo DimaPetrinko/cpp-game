@@ -10,7 +10,6 @@ build/
 bin/
 obj/
 [Mm]akefile
-!MakeProject/[Mm]akefile
 *.sln
 *.vcxproj
 *.vcxproj.*
