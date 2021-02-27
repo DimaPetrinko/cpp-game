@@ -1,3 +1,6 @@
+ # cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -HG:\Work\cpp-game -BG:\Work\cpp-game\build -G "Visual Studio 16 2019" -Ax64
+ # cmake --build build --config Debug --target install
+ 
 set(INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install/${CMAKE_BUILD_TYPE})
 set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
@@ -6,22 +9,25 @@ set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 	set(CURRENT_LIB_DIR ${LIB_DIR}/Win64)
+	set(LIBS glfw3 glew32 opengl32 legacy_stdio_definitions)
 elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
 	set(CURRENT_LIB_DIR ${LIB_DIR}/Linux64)
+	set(LIBS -lglfw -lGLEW -lGL)
 endif()
 
 file(GLOB_RECURSE SOURCES ${SOURCES_DIR}/*.cpp)
 file(GLOB_RECURSE HEADERS ${SOURCES_DIR}/*.h)
 
 message("")
-message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
-message("INSTALL_DIR: " ${INSTALL_DIR})
-message("SOURCES_DIR: " ${SOURCES_DIR})
-message("RESOURCES_DIR: " ${RESOURCES_DIR})
-message("EXTERNAL_INCLUDE_DIR: " ${EXTERNAL_INCLUDE_DIR})
-message("CURRENT_LIB_DIR: " ${CURRENT_LIB_DIR})
-message("SOURCES:" ${SOURCES})
-message("HEADERS:" ${HEADERS})
+message("CMAKE_SYSTEM_NAME:     " ${CMAKE_SYSTEM_NAME})
+message("INSTALL_DIR:           " ${INSTALL_DIR})
+message("SOURCES_DIR:           " ${SOURCES_DIR})
+message("RESOURCES_DIR:         " ${RESOURCES_DIR})
+message("EXTERNAL_INCLUDE_DIR:  " ${EXTERNAL_INCLUDE_DIR})
+message("CURRENT_LIB_DIR:       " ${CURRENT_LIB_DIR})
+message("LIBS:                  " ${LIBS})
+message("SOURCES:               " ${SOURCES})
+message("HEADERS:               " ${HEADERS})
 message("")
 
 add_executable(cpp-game ${SOURCES} ${HEADERS})
@@ -35,11 +41,7 @@ set_target_properties(
 target_include_directories(cpp-game PRIVATE ${EXTERNAL_INCLUDE_DIR})
 target_include_directories(cpp-game PRIVATE ${SOURCES_DIR})
 target_link_directories(cpp-game PRIVATE ${CURRENT_LIB_DIR})
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-	target_link_libraries(cpp-game glfw3 glew32 opengl32 legacy_stdio_definitions)
-elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
-	target_link_libraries(cpp-game -lglfw -lGLEW -lGL)
-endif()
+target_link_libraries(cpp-game ${LIBS})
 
 install(TARGETS cpp-game DESTINATION ${INSTALL_DIR})
 install(DIRECTORY ${RESOURCES_DIR} DESTINATION ${INSTALL_DIR})
