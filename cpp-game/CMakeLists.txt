@@ -13,6 +13,7 @@ endif()
 file(GLOB_RECURSE SOURCES ${SOURCES_DIR}/*.cpp)
 file(GLOB_RECURSE HEADERS ${SOURCES_DIR}/*.h)
 
+message("")
 message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
 message("INSTALL_DIR: " ${INSTALL_DIR})
 message("SOURCES_DIR: " ${SOURCES_DIR})
@@ -21,6 +22,7 @@ message("EXTERNAL_INCLUDE_DIR: " ${EXTERNAL_INCLUDE_DIR})
 message("CURRENT_LIB_DIR: " ${CURRENT_LIB_DIR})
 message("SOURCES:" ${SOURCES})
 message("HEADERS:" ${HEADERS})
+message("")
 
 add_executable(cpp-game ${SOURCES} ${HEADERS})
 
@@ -33,7 +35,11 @@ set_target_properties(
 target_include_directories(cpp-game PRIVATE ${EXTERNAL_INCLUDE_DIR})
 target_include_directories(cpp-game PRIVATE ${SOURCES_DIR})
 target_link_directories(cpp-game PRIVATE ${CURRENT_LIB_DIR})
-target_link_libraries(cpp-game -lglfw -lGLEW -lGL)
+if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+	target_link_libraries(cpp-game glfw3 glew32 opengl32 legacy_stdio_definitions)
+elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
+	target_link_libraries(cpp-game -lglfw -lGLEW -lGL)
+endif()
 
 install(TARGETS cpp-game DESTINATION ${INSTALL_DIR})
 install(DIRECTORY ${RESOURCES_DIR} DESTINATION ${INSTALL_DIR})
