@@ -34,7 +34,7 @@ add_executable(cpp-game ${SOURCES} ${HEADERS})
 
 set_target_properties(
 	cpp-game PROPERTIES
-	CXX_STANDARD 11
+	CXX_STANDARD 17
 	CXX_STANDARD_REQUIRED ON
 )
 
