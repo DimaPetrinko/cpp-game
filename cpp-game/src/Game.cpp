@@ -81,12 +81,10 @@ int Game::Run()
 		mPlayer->UpdatePhysics();
 
 		Bounds playerBounds = mPlayer->GetRenderer()->GetBounds();
-		Bounds staticPlayerBounds = staticObject->GetRenderer()->GetBounds();
+		Bounds staticObjectBounds = staticObject->GetRenderer()->GetBounds();
 
-		vec2 resolution = playerBounds.Intersects(staticPlayerBounds);
-		mPlayer->Position += resolution;
-		mPlayer->ChangeVelocity(resolution / Physics::DeltaTime);
-		mPlayer->InAir = resolution.x == 0 && resolution.y == 0;
+		vec2 resolution = playerBounds.Intersects(staticObjectBounds);
+		mPlayer->ResolveCollision(resolution);
 
 		// render
 		glClear(GL_COLOR_BUFFER_BIT);

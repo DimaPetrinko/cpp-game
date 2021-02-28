@@ -7,8 +7,8 @@
 Player::Player(BoxRenderer* renderer, float movementSpeed) : Player({0,0}, renderer, movementSpeed) {}
 
 Player::Player(vec2 position, BoxRenderer* renderer, float movementSpeed)
-	: Object(position, renderer), Drag(Physics::DefaultDrag),
-		Acceleration(0,0), Velocity(0,0)
+	: Object(position, renderer), mDrag(Physics::DefaultDrag),
+		mAcceleration(0,0), mVelocity(0,0)
 {
 	if (movementSpeed <= 0) movementSpeed = 0.05f;
 	MovementSpeed = movementSpeed;
@@ -20,15 +20,32 @@ Player::Player(vec2 position, BoxRenderer* renderer, float movementSpeed)
 	InactiveDrag = 0.1f;
 }
 
-void Player::ChangeVelocity(vec2 amount)
-{
-	Acceleration += amount;
-}
-
 void Player::Move(vec2 movement)
 {
 	movement *= MovementSpeed * Physics::DeltaTime;
-	ChangeVelocity(movement);
+	AddVelocity(movement);
+}
+
+void Player::HandleJump(int key)
+{
+	if (!mInAir) mJumpsLeft = JumpsAllowed;
+
+	if (mJumpsLeft > 0)
+	{
+		if (key == GLFW_PRESS && mPreviousSpaceKeyState != GLFW_PRESS)
+		{
+			mJumpsLeft--;
+			AddVelocity(vec2{0, JumpForce});
+		}
+		mPreviousSpaceKeyState = key;
+	}
+}
+
+void Player::ResolveCollision(vec2 resolution)
+{
+	Position += resolution;
+	AddVelocity(resolution / Physics::DeltaTime);
+	mInAir = resolution.x == 0 && resolution.y == 0;
 }
 
 void Player::UpdateLogic(GLFWwindow* window)
@@ -39,13 +56,13 @@ void Player::UpdateLogic(GLFWwindow* window)
 
 	bool movementPresent = movement.x != 0;
 
-	if (std::abs(Velocity.x) > MaxSpeed) movement = {0,0};
+	if (std::abs(mVelocity.x) > MaxSpeed) movement = {0,0};
 
-	if (!movementPresent && !InAir) ChangeVelocity(vec2(-Velocity.x * InactiveDrag, 0));
+	if (!movementPresent && !mInAir) AddVelocity(vec2(-mVelocity.x * InactiveDrag, 0)); // This is essentially friction
 
 	HandleJump(glfwGetKey(window, GLFW_KEY_SPACE));
 
-	if (InAir)
+	if (mInAir)
 	{
 		movement *= (1 - MidAirInputDampening);
 	}
@@ -57,32 +74,33 @@ void Player::UpdateLogic(GLFWwindow* window)
 
 void Player::UpdatePhysics()
 {
-	Acceleration += Physics::Gravity;
-	Velocity += Acceleration;
-	Velocity.x = std::clamp(Velocity.x, -Physics::TerminalVelocity, Physics::TerminalVelocity);
-	Velocity.y = std::clamp(Velocity.y, -Physics::TerminalVelocity, Physics::TerminalVelocity);
-	Position += Velocity * Physics::DeltaTime;
+	mAcceleration += Physics::Gravity;
+	mVelocity += mAcceleration;
+	mVelocity.x = std::clamp(mVelocity.x, -Physics::TerminalVelocity, Physics::TerminalVelocity);
+	mVelocity.y = std::clamp(mVelocity.y, -Physics::TerminalVelocity, Physics::TerminalVelocity);
+	Position += mVelocity * Physics::DeltaTime;
 
 	std::cout << "Physics update:\n  Position: " << COUT_V(Position)
-		<< ";\n  Velocity: " << COUT_V(Velocity)
-		<< ";\n  Acceleration: " << COUT_V(Acceleration)
-		<< ";\n  Drag: " << Drag << ";\n\n";
+		<< ";\n  Velocity: " << COUT_V(mVelocity)
+		<< ";\n  Acceleration: " << COUT_V(mAcceleration)
+		<< ";\n  Drag: " << mDrag << ";\n\n";
 
-	Acceleration = {0,0};
-	Velocity *= (1 - Drag);
+	mAcceleration = {0,0};
+	mVelocity *= (1 - mDrag);
 }
 
-void Player::HandleJump(int key)
+void Player::AddVelocity(vec2 amount)
 {
-	if (!InAir) mJumpsLeft = JumpsAllowed;
+	mAcceleration += amount;
+}
 
-	if (mJumpsLeft > 0)
-	{
-		if (key == GLFW_PRESS && mPreviousSpaceKeyState != GLFW_PRESS)
-		{
-			mJumpsLeft--;
-			Velocity += vec2{0, JumpForce};
-		}
-		mPreviousSpaceKeyState = key;
-	}
+void Player::SetVelocity(vec2 newVelocity)
+{
+	vec2 velocityDelta = newVelocity - mVelocity;
+	AddVelocity(velocityDelta);
+}
+
+vec2 Player::GetVelocity() const
+{
+	return mVelocity;
 }
