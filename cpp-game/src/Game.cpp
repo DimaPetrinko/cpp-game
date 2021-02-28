@@ -65,7 +65,7 @@ int Game::Run()
 	// initialize game
 	mPlayer = new Player({-180,0}, RendererFarm::CreateBoxRenderer({10.0f, 10.0f}, {0.1f, 0.2f, 0.75f, 1.0f}), 400.0f);
 	Object* staticObject = new Object({0, -130},
-		RendererFarm::CreateBoxRenderer({600.0f, 100.0f},
+		RendererFarm::CreateBoxRenderer({6000.0f, 100.0f},
 			{0.75f, 0.2f, 0.1f, 1.0f}));
 
 	while (!glfwWindowShouldClose(mWindow))

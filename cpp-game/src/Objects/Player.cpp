@@ -35,7 +35,7 @@ void Player::HandleJump(int key)
 		if (key == GLFW_PRESS && mPreviousSpaceKeyState != GLFW_PRESS)
 		{
 			mJumpsLeft--;
-			AddVelocity(vec2{0, JumpForce});
+			AddVelocity(vec2{0, JumpForce - mVelocity.y});
 		}
 		mPreviousSpaceKeyState = key;
 	}
