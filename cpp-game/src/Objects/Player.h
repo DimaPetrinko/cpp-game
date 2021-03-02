@@ -19,7 +19,7 @@ private:
 	vec2 mVelocity;
 	float mDrag;
 
-	float mPreviousSpaceKeyState;
+	int mPreviousSpaceKeyState;
 	float mJumpsLeft;
 	bool mInAir;
 
