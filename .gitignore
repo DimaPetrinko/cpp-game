@@ -1,9 +1,12 @@
+.vs
 .vs/*
 */.vs/*
+.vscode
 .vscode/*
 !.vscode/*.json
 */.vscode/*
 !*/.vscode/*.json
+.idea
 
 !*.lib
 build/

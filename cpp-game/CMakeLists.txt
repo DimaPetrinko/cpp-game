@@ -9,7 +9,11 @@ set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 	set(CURRENT_LIB_DIR ${LIB_DIR}/Win64)
-	set(LIBS glfw3 glew32 opengl32 legacy_stdio_definitions)
+	if (MSVC)
+		set(LIBS glfw3 libglew32 opengl32 legacy_stdio_definitions)
+	elseif (MINGW)
+		set(LIBS glfw3 glew32 opengl32)
+	endif()
 elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
 	set(CURRENT_LIB_DIR ${LIB_DIR}/Linux64)
 	set(LIBS -lglfw -lGLEW -lGL)
@@ -34,7 +38,7 @@ add_executable(cpp-game ${SOURCES} ${HEADERS})
 
 set_target_properties(
 	cpp-game PROPERTIES
-	CXX_STANDARD 11
+	CXX_STANDARD 17
 	CXX_STANDARD_REQUIRED ON
 )
 

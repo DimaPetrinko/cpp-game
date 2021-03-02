@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "Utils/RendererFarm.h"
+#include "Utils/Physics.h"
 
 
 void OnFramebufferChanged(GLFWwindow* window, int width, int height)
@@ -62,9 +63,9 @@ int Game::Run()
 	if (initializationStatus != 1) return initializationStatus;
 
 	// initialize game
-	mPlayer = new Player(RendererFarm::CreateBoxRenderer({30.0f, 30.0f}, {0.1f, 0.2f, 0.75f, 1.0f}), 5.0f);
-	Object* staticObject = new Object({0, 50},
-		RendererFarm::CreateBoxRenderer({120.0f, 20.0f},
+	mPlayer = new Player({-180,0}, RendererFarm::CreateBoxRenderer({10.0f, 10.0f}, {0.1f, 0.2f, 0.75f, 1.0f}), 400.0f);
+	Object* staticObject = new Object({0, -130},
+		RendererFarm::CreateBoxRenderer({6000.0f, 100.0f},
 			{0.75f, 0.2f, 0.1f, 1.0f}));
 
 	while (!glfwWindowShouldClose(mWindow))
@@ -72,21 +73,18 @@ int Game::Run()
 		// input
 		glfwPollEvents();
 
-		vec2 movement = {0,0};
 		if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
 
-		if (glfwGetKey(mWindow, GLFW_KEY_W) != GLFW_RELEASE) movement.y += 1.0f;
-		if (glfwGetKey(mWindow, GLFW_KEY_S) != GLFW_RELEASE) movement.y -= 1.0f;
-		if (glfwGetKey(mWindow, GLFW_KEY_D) != GLFW_RELEASE) movement.x += 1.0f;
-		if (glfwGetKey(mWindow, GLFW_KEY_A) != GLFW_RELEASE) movement.x -= 1.0f;
-
 		// update
-		mPlayer->Move(movement);
-		Bounds playerBounds = mPlayer->GetRenderer()->GetBounds();
-		Bounds staticPlayerBounds = staticObject->GetRenderer()->GetBounds();
+		mPlayer->UpdateLogic(mWindow);
 
-		vec2 resolution = playerBounds.Intersects(staticPlayerBounds);
-		mPlayer->Position += resolution;
+		mPlayer->UpdatePhysics();
+
+		Bounds playerBounds = mPlayer->GetRenderer()->GetBounds();
+		Bounds staticObjectBounds = staticObject->GetRenderer()->GetBounds();
+
+		vec2 resolution = playerBounds.Intersects(staticObjectBounds);
+		mPlayer->ResolveCollision(resolution);
 
 		// render
 		glClear(GL_COLOR_BUFFER_BIT);
