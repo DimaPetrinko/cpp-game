@@ -1,7 +1,5 @@
 #include "Bounds.h"
 
-#include <iostream>
-
 Bounds::Bounds(vec2 bottomLeft,	vec2 topRight)
 {
 	BottomLeft = bottomLeft;

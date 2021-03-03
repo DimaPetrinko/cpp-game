@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include "Utils/RendererFarm.h"
-#include "Utils/Physics.h"
 
 
 void OnFramebufferChanged(GLFWwindow* window, int width, int height)
@@ -30,7 +29,7 @@ int Game::InitializeGraphics()
 {
 	if (!glfwInit()) return -1;
 
-	mWindow = glfwCreateWindow(640, 480, "cpp-game", NULL, NULL);
+	mWindow = glfwCreateWindow(640, 480, "cpp-game", nullptr, nullptr);
 
 	if (!mWindow)
 	{

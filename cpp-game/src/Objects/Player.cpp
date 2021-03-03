@@ -18,6 +18,10 @@ Player::Player(vec2 position, BoxRenderer* renderer, float movementSpeed)
 	MaxSpeed = 200;
 	MidAirInputDampening = 0.4f;
 	InactiveDrag = 0.1f;
+
+	mJumpsLeft = 0;
+	mInAir = false;
+	mPreviousSpaceKeyState = 0;
 }
 
 void Player::Move(vec2 movement)
