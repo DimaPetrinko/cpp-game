@@ -28,7 +28,6 @@ foreach(I IN LISTS LIBS)
 	endif()
 	list(APPEND LIBS_TO_LINK ${LIB_PATH})
 endforeach()
-message("paths " ${LIBS_TO_LINK})
 
 file(GLOB_RECURSE SOURCES ${SOURCES_DIR}/*.cpp)
 file(GLOB_RECURSE HEADERS ${SOURCES_DIR}/*.h)
