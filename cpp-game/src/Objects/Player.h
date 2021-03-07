@@ -28,10 +28,10 @@ public:
 	Player(vec2 position, BoxRenderer* renderer, float movementSpeed);
 
 	void Move(vec2 movement);
-	void UpdateLogic(GLFWwindow* window);
-	
-	void UpdatePhysics();
-	void ResolveCollision(vec2 resolution);
+	void UpdateLogic(Graphics::GraphicsContext* context) override;
+ 
+	void UpdatePhysics() override;
+	void ResolveCollision(vec2 resolution) override;
 
 	void AddVelocity(vec2 amount);
 	void SetVelocity(vec2 newVelocity);

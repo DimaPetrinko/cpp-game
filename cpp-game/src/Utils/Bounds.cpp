@@ -1,14 +1,10 @@
 #include "Bounds.h"
 
-Bounds::Bounds(vec2 bottomLeft,	vec2 topRight)
+Bounds::Bounds(vec2 center,	vec2 size)
 {
-	BottomLeft = bottomLeft;
-	TopRight = topRight;
-	BottomRight = {TopRight.x, BottomLeft.y};
-	TopLeft = {BottomLeft.x, TopRight.y};
-	Size = TopRight - BottomLeft;
+	Center = center;
+	Size = size;
 	Extent = Size / 2.0f;
-	Center = BottomLeft + Extent;
 }
 
 Bounds::~Bounds() {}
