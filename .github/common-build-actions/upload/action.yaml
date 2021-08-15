@@ -9,3 +9,4 @@ runs:
     with:
       name: build-install-${{runner.os}}
       path: ${{github.workspace}}/build/install
+    run: echo "Uploading the build"
