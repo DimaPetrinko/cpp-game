@@ -1,4 +1,4 @@
-name: Build-windows
+name: Build
 
 on:
   push:
@@ -19,36 +19,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: common-build-actions
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "configureCMake"
-    - uses: common-build-actions
+        name: configureCMake
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "build"
-    - uses: common-build-actions
+        name: build
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "test"
-    - uses: common-build-actions
+        name: test
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "upload"
+        name: upload
 
   build-linux:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - uses: common-build-actions
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "configureGL"
-    - uses: common-build-actions
+        name: configureGL
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "configureCMake"
-    - uses: common-build-actions
+        name: configureCMake
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "build"
-    - uses: common-build-actions
+        name: build
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "test"
-    - uses: common-build-actions
+        name: test
+    - uses: ./.github/actions/common-build-actions
       with:
-        name: "upload"
+        name: upload
