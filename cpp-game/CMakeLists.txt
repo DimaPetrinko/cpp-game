@@ -1,7 +1,7 @@
  # cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -HG:\Work\cpp-game -BG:\Work\cpp-game\build -G "Visual Studio 16 2019" -Ax64
  # cmake --build build --config Debug --target install
  
-set(INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install/)
+set(INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${CMAKE_PROJECT_NAME})
 set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
 set(EXTERNAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
