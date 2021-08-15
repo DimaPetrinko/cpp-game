@@ -2,7 +2,7 @@
 
 #include "ObjectRenderer.h"
 #include "Objects/Object.h"
-#include "Utils/GL.h"
+#include "Graphics/GL.h"
 
 class BoxRenderer : public ObjectRenderer
 {

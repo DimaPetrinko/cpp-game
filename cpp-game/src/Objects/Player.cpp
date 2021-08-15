@@ -4,6 +4,8 @@
 #include <algorithm>
 #include "Utils/Physics.h"
 
+// TODO move to namespace
+
 Player::Player(BoxRenderer* renderer, float movementSpeed) : Player({0,0}, renderer, movementSpeed) {}
 
 Player::Player(vec2 position, BoxRenderer* renderer, float movementSpeed)
@@ -52,11 +54,11 @@ void Player::ResolveCollision(vec2 resolution)
 	mInAir = resolution.x == 0 && resolution.y == 0;
 }
 
-void Player::UpdateLogic(GLFWwindow* window)
+void Player::UpdateLogic(Graphics::GraphicsContext* context)
 {
 	vec2 movement = {0,0};
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) movement.x += 1.0f;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) movement.x -= 1.0f;
+	if (context->GetKey(GLFW_KEY_D)) movement.x += 1.0f;
+	if (context->GetKey(GLFW_KEY_A)) movement.x -= 1.0f;
 
 	bool movementPresent = movement.x != 0;
 
@@ -64,7 +66,7 @@ void Player::UpdateLogic(GLFWwindow* window)
 
 	if (!movementPresent && !mInAir) AddVelocity(vec2(-mVelocity.x * InactiveDrag, 0)); // This is essentially friction
 
-	HandleJump(glfwGetKey(window, GLFW_KEY_SPACE));
+	HandleJump(context->GetKey(GLFW_KEY_SPACE));
 
 	if (mInAir)
 	{

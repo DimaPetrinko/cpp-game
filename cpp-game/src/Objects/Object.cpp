@@ -13,6 +13,13 @@ Object::~Object()
 	delete mRenderer;
 }
 
+void Object::UpdateLogic(Graphics::GraphicsContext* context) {}
+
+void Object::UpdatePhysics() {}
+
+void Object::ResolveCollision(vec2 resolution) {}
+
+
 ObjectRenderer* Object::GetRenderer() const
 {
 	return mRenderer;

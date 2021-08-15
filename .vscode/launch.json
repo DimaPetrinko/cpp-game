@@ -6,10 +6,10 @@
             "type": "cppdbg",
             "request": "launch",
             // Resolved by CMake Tools:
-            "program": "${command:cmake.buildDirectory}/${command:cmake.getLaunchTargetFilename}/install/${command:cmake.buildType}/${command:cmake.getLaunchTargetFilename}",
+            "program": "${command:cmake.buildDirectory}/${command:cmake.getLaunchTargetFilename}/install/${command:cmake.getLaunchTargetFilename}",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${command:cmake.buildDirectory}/${command:cmake.getLaunchTargetFilename}/install",
             "environment": [
                 {
                     "name": "PATH",
