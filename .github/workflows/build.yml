@@ -16,21 +16,27 @@ env:
 jobs:
   build-windows:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/common-build-actions/configureCMake
     - uses: ./.github/common-build-actions/build
     - uses: ./.github/common-build-actions/test
-    - uses: ./.github/common-build-actions/upload
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-install-${{runner.os}}
+        path: ${{github.workspace}}/build/install
 
   build-linux:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/common-build-actions/configureGL
     - uses: ./.github/common-build-actions/configureCMake
     - uses: ./.github/common-build-actions/build
     - uses: ./.github/common-build-actions/test
-    - uses: ./.github/common-build-actions/upload
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-install-${{runner.os}}
+        path: ${{github.workspace}}/build/install

@@ -4,6 +4,6 @@ runs:
   using: "composite"
   steps:
   - name: Build
-    shell: bash
+    shell: pwsh
     # Build your program with the given configuration
     run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
