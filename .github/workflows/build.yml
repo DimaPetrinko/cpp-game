@@ -1,0 +1,54 @@
+name: Build-windows
+
+on:
+  push:
+    branches:
+      - v2/develop
+      - master
+  pull_request:
+    branches:
+      - v2/develop
+      - master
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: common-build-actions
+      with:
+        name: "configureCMake"
+    - uses: common-build-actions
+      with:
+        name: "build"
+    - uses: common-build-actions
+      with:
+        name: "test"
+    - uses: common-build-actions
+      with:
+        name: "upload"
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: common-build-actions
+      with:
+        name: "configureGL"
+    - uses: common-build-actions
+      with:
+        name: "configureCMake"
+    - uses: common-build-actions
+      with:
+        name: "build"
+    - uses: common-build-actions
+      with:
+        name: "test"
+    - uses: common-build-actions
+      with:
+        name: "upload"
