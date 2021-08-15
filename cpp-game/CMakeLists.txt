@@ -59,3 +59,4 @@ target_link_libraries(cpp-game ${LIBS_TO_LINK})
 
 install(TARGETS cpp-game DESTINATION ${INSTALL_DIR})
 install(DIRECTORY ${RESOURCES_DIR} DESTINATION ${INSTALL_DIR})
+# generate/use a bash script with ./${project name} in it to launch the game
