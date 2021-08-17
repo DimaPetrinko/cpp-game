@@ -1,8 +1,13 @@
 #pragma once
 
 #include "Graphics/Renderer.h"
-#include "Utils/Vector.h"
+#include "Graphics/WindowData.h"
 #include "Utils/ReturnCodes.h"
+
+#define CHECK_RETURN_CODE_RUNNING_CONDITION 	if (mReturnCode == RETURN_CODE_RUNNING)
+#define CHECK_RETURN_CODE_CONDITION 			if (mReturnCode != RETURN_CODE_RUNNING)
+#define CHECK_RETURN_CODE_AND_RETURN 			if (mReturnCode != RETURN_CODE_RUNNING) return
+#define CHECK_RETURN_CODE_AND_RETURN_CODE 		if (mReturnCode != RETURN_CODE_RUNNING) return mReturnCode
 
 namespace GameLoop
 {
@@ -13,23 +18,30 @@ namespace GameLoop
 		Graphics::GraphicsContext* mContext;
 		ReturnCode mReturnCode;
 	private:
+		Graphics::WindowData mWindowData;
 		bool mRendererCreated;
 		bool mGraphicsInitialized;
-		bool mInitPerformed;
+		bool mDataInitialized;
 
 	public:
-		App(vec2 size, const std::string&& title);
+		App(Graphics::WindowData&& windowData);
 		virtual ~App();
 
 		ReturnCode Run();
-		void Shutdown();
 
 	protected:
-		virtual void Initialize() = 0;
+		void Shutdown();
+
+		virtual void InitializeData() = 0;
+		virtual void DeinitializeData() = 0;
+
 		virtual void UpdateInput() = 0;
 		virtual void UpdateLogic() = 0;
 		virtual void UpdatePhysics() = 0;
 		virtual void UpdateGraphics() = 0;
-		virtual void Deinitialize() = 0;
+
+	private:
+		ReturnCode Initialize();
+		void Deinitialize();
 	};
 }

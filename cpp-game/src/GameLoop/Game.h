@@ -15,15 +15,16 @@ namespace GameLoop
 		vec2 mMousePosition;
 
 	public:
-		Game(vec2 size, const std::string&& title);
+		Game(Graphics::WindowData&& windowData);
 		~Game();
 
 	protected:
-		void Initialize() override;
+		void InitializeData() override;
+		void DeinitializeData() override;
+
 		void UpdateInput() override;
 		void UpdateLogic() override;
 		void UpdatePhysics() override;
 		void UpdateGraphics() override;
-		void Deinitialize() override;
 	};
 }
