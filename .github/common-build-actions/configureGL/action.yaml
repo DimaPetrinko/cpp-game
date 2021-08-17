@@ -5,4 +5,4 @@ runs:
   steps:
   - name: Install gl and glu
     shell: bash
-    run: sudo apt-get install mesa-common-dev libglu1-mesa-dev
+    run: sudo apt-get update && sudo apt-get install mesa-common-dev libglu1-mesa-dev
