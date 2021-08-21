@@ -1,6 +1,5 @@
 #include "Renderer.h"
 #include "Graphics/Shaders.hpp"
-#include "Utils/ReturnCodes.h"
 
 namespace Graphics
 {
@@ -27,7 +26,7 @@ namespace Graphics
 		return &mContext;
 	}
 
-	bool Renderer::InitializeGraphics(vec2 size, const std::string&& title)
+	ReturnCode Renderer::InitializeGraphics(vec2 size, const std::string&& title)
 	{
 		if (!InitializeContext()) return RETURN_CODE_ERROR;
 		

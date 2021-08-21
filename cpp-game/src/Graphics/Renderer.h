@@ -3,6 +3,7 @@
 #include "Graphics/GL.h"
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/GrahicsStructs.h"
+#include "Utils/ReturnCodes.h"
 
 namespace Graphics
 {
@@ -26,7 +27,7 @@ namespace Graphics
 		static Renderer* Instance();
 		GraphicsContext* Context();
 
-		bool InitializeGraphics(vec2 size, const std::string&& title);
+		ReturnCode InitializeGraphics(vec2 size, const std::string&& title);
 		void DeinitializeGraphics();
 		
 		void Clear(col4 color);

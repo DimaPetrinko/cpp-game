@@ -11,10 +11,12 @@ namespace Graphics
 	public:
 		GraphicsContext(GLFWwindow* window);
 		~GraphicsContext();
+
 		GLFWwindow* Window();
 		bool ShouldWindowClose();
 		void CloseWindow();
 		void CancelCloseWindow();
+
 		void InitializeWindowResizing();
 		void InitializeInput();
 		void UpdateInput();

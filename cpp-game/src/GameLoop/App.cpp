@@ -2,28 +2,36 @@
 
 namespace GameLoop
 {
-	App::App(vec2 size, const std::string&& title)
-	{
-		mRenderer = new Graphics::Renderer();
-		mRendererCreated = true;
-		mReturnCode = mRenderer->InitializeGraphics(size, std::move(title));
-		mGraphicsInitialized = true;
-		if (mReturnCode != RETURN_CODE_RUNNING) return;
-
-		mContext = mRenderer->Context();
-	}
+	App::App(Graphics::WindowData&& windowData) : mWindowData(std::move(windowData))
+	{}
 
 	App::~App()
 	{
 		if (mRendererCreated) delete mRenderer;
 	}
 
-	void App::Shutdown()
+	ReturnCode App::Initialize()
 	{
-		if (mInitPerformed)
+		mRenderer = new Graphics::Renderer();
+		mContext = mRenderer->Context();
+		mRendererCreated = true;
+
+		mReturnCode = mRenderer->InitializeGraphics(mWindowData.Size, std::move(mWindowData.Title));
+		mGraphicsInitialized = true;
+		CHECK_RETURN_CODE_AND_RETURN_CODE;
+
+		InitializeData();
+		mDataInitialized = true;
+
+		return mReturnCode;
+	}
+
+	void App::Deinitialize()
+	{
+		if (mDataInitialized)
 		{
-			Deinitialize();
-			mInitPerformed = false;
+			DeinitializeData();
+			mDataInitialized = false;
 		}
 		if (mGraphicsInitialized)
 		{
@@ -39,27 +47,25 @@ namespace GameLoop
 
 	ReturnCode App::Run()
 	{
-		if (mReturnCode != RETURN_CODE_RUNNING) return mReturnCode;
+		mReturnCode = Initialize();
 
-		Initialize();
-		mInitPerformed = true;
-
-		while (!mContext->ShouldWindowClose())
-		{		
+		while (mReturnCode == RETURN_CODE_RUNNING)
+		{
 			UpdateInput();
 			UpdateLogic();
 			UpdatePhysics();
 			UpdateGraphics();
 
-			if (mReturnCode != RETURN_CODE_RUNNING) return mReturnCode;
+			if (mContext->ShouldWindowClose()) mReturnCode = RETURN_CODE_EXIT;
 		}
-		mReturnCode = RETURN_CODE_EXIT;
 
 		Deinitialize();
-		mInitPerformed = false;
 
-		mRenderer->DeinitializeGraphics();
-		mGraphicsInitialized = false;
 		return mReturnCode;
+	}
+
+	void App::Shutdown()
+	{
+		mContext->CloseWindow();
 	}
 }

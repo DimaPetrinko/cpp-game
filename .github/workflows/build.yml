@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - v2/develop
+      - develop
+      - master
+  pull_request:
+    branches:
+      - v2/develop
+      - develop
+      - master
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Configure CMake
+      uses: ./.github/common-build-actions/configureCMake
+    - name: Build
+      uses: ./.github/common-build-actions/build
+    - name: Test
+      uses: ./.github/common-build-actions/test
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-install-${{runner.os}}
+        path: ${{github.workspace}}/build/install
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Configure GL
+      uses: ./.github/common-build-actions/configureGL
+    - name: Configure CMake
+      uses: ./.github/common-build-actions/configureCMake
+    - name: Build
+      uses: ./.github/common-build-actions/build
+    - name: Test
+      uses: ./.github/common-build-actions/test
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-install-${{runner.os}}
+        path: ${{github.workspace}}/build/install

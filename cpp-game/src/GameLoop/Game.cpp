@@ -4,11 +4,11 @@
 
 namespace GameLoop
 {
-	Game::Game(vec2 size, const std::string&& title) : App(size, std::move(title)) {}
+	Game::Game(Graphics::WindowData&& windowData) : App(std::move(windowData)) {}
 
 	Game::~Game() {}
 
-	void Game::Initialize()
+	void Game::InitializeData()
 	{
 		mPlayer = new Player({-180,0}, RendererFarm::CreateBoxRenderer({10.0f, 10.0f},
 				{0.1f, 0.2f, 0.75f, 1.0f}), 400.0f);
@@ -19,11 +19,21 @@ namespace GameLoop
 		mGameObjects.push_back(other);
 	}
 
+	void Game::DeinitializeData()
+	{
+		for (auto &&go : mGameObjects)
+		{
+			delete go;
+		}
+
+		mGameObjects.clear();
+	}
+
 	void Game::UpdateInput()
 	{
 		mContext->UpdateInput();
 
-		if (mContext->GetKey(GLFW_KEY_ESCAPE)) mContext->CloseWindow();
+		if (mContext->GetKey(GLFW_KEY_ESCAPE)) Shutdown();
 		if (mContext->GetKeyDown(GLFW_KEY_DELETE)) mReturnCode = RETURN_CODE_ERROR;
 		mMousePosition = mContext->GetMousePosition();
 	}
@@ -65,15 +75,5 @@ namespace GameLoop
 		}
 
 		mRenderer->FinishFrame();
-	}
-
-	void Game::Deinitialize()
-	{
-		for (auto &&go : mGameObjects)
-		{
-			delete go;
-		}
-
-		mGameObjects.clear();
 	}
 }
