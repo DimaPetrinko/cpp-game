@@ -3,15 +3,19 @@
 #include "ObjectRenderer.h"
 #include "Objects/Object.h"
 #include "Graphics/GL.h"
+#include "Graphics/Texture.h"
 
-class BoxRenderer : public ObjectRenderer
+namespace Objects
 {
-public:
-	col4 Color;
+	class BoxRenderer : public ObjectRenderer
+	{
+	public:
+		col4 Color;
 
-public:
-	BoxRenderer(vec2 size, col4 color);
+	public:
+		BoxRenderer(vec2 size, col4 color);
 
-	void Draw() const override;
-	Bounds GetBounds() const override;
-};
+		void Draw() const override;
+		Bounds GetBounds() const override;
+	};
+}

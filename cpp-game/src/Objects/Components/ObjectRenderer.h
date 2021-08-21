@@ -1,22 +1,28 @@
 #pragma once
 
 #include "Utils/Bounds.h"
+#include "Graphics/Texture.h"
 
-class Object;
-
-class ObjectRenderer
+namespace Objects
 {
-public:
-	vec2 Size;
+	class Object;
 
-protected:
-	const Object* mOwner;
+	class ObjectRenderer
+	{
+	public:
+		vec2 Size;
 
-public:
-	ObjectRenderer(vec2 size);
-	~ObjectRenderer();
+	protected:
+		const Object* mOwner;
+		const Graphics::Texture* mTexture;
 
-	void SetOwner(const Object* owner);
-	virtual void Draw() const = 0;
-	virtual Bounds GetBounds() const = 0;
-};
+	public:
+		ObjectRenderer(vec2 size);
+		~ObjectRenderer();
+
+		void SetOwner(const Object* owner);
+		void SetTexture(const Graphics::Texture* texture);
+		virtual void Draw() const = 0;
+		virtual Bounds GetBounds() const = 0;
+	};
+}

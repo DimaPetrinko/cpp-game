@@ -1,26 +1,28 @@
 #include "Object.h"
 
-Object::Object(ObjectRenderer* renderer) : Object({0,0}, renderer) {}
-
-Object::Object(vec2 position, ObjectRenderer* renderer) : Position(0,0), mRenderer(renderer)
+namespace Objects
 {
-	Position = position;
-	mRenderer->SetOwner(this);
-}
+	Object::Object(ObjectRenderer* renderer) : Object({0,0}, renderer) {}
 
-Object::~Object()
-{
-	delete mRenderer;
-}
+	Object::Object(vec2 position, ObjectRenderer* renderer) : Position(0,0), mRenderer(renderer)
+	{
+		Position = position;
+		mRenderer->SetOwner(this);
+	}
 
-void Object::UpdateLogic(Graphics::GraphicsContext* context) {}
+	Object::~Object()
+	{
+		delete mRenderer;
+	}
 
-void Object::UpdatePhysics() {}
+	void Object::UpdateLogic(Graphics::GraphicsContext* context) {}
 
-void Object::ResolveCollision(vec2 resolution) {}
+	void Object::UpdatePhysics() {}
 
+	void Object::ResolveCollision(vec2 resolution) {}
 
-ObjectRenderer* Object::GetRenderer() const
-{
-	return mRenderer;
+	ObjectRenderer* Object::GetRenderer() const
+	{
+		return mRenderer;
+	}
 }

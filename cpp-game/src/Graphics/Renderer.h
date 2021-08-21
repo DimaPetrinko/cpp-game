@@ -3,6 +3,7 @@
 #include "Graphics/GL.h"
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/GrahicsStructs.h"
+#include "Graphics/Texture.h"
 #include "Utils/ReturnCodes.h"
 
 namespace Graphics
@@ -18,6 +19,7 @@ namespace Graphics
 		GraphicsContext mContext;
 		Mesh* mDefaultQuad;
 		GLuint mVa, mIb, mVb, mShader;
+		unsigned int mLastTextureSlot;
 		bool mInitialized;
 
 	public:
@@ -37,7 +39,8 @@ namespace Graphics
 		Mesh* CreateDefaultQuad();
 		void InitializeGraphicsObjects();
 		void DestroyGraphicsObjects();
-		void DrawQuad(vec2 size, vec2 position, col4 color);
+		unsigned int GetTextureSlot();
+		void DrawQuad(vec2 size, vec2 position, col4 color, const Texture* texture = nullptr);
 
 	private:
 		bool InitializeContext();

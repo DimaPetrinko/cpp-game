@@ -187,7 +187,12 @@ namespace Graphics
 		delete mDefaultQuad;
 	}
 
-	void Renderer::DrawQuad(vec2 size, vec2 position, col4 color)
+	unsigned int Renderer::GetTextureSlot()
+	{
+		return mLastTextureSlot++;
+	}
+
+	void Renderer::DrawQuad(vec2 size, vec2 position, col4 color, const Texture* texture)
 	{	
 		glUseProgram(mShader);
 		glBindVertexArray(mVa);
@@ -199,6 +204,16 @@ namespace Graphics
 		transformation *= glm::scale(vec3(size, 1));
 
 		glm::mat4 mp = ProjectionMatrix * transformation;
+
+		if (texture) 
+		{
+			texture->Bind(texture->Slot);
+			glUniform1i(Shaders::GetUniformLocation(mShader, "u_Texture"), texture->Slot);
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 
 		glUniformMatrix4fv(Shaders::GetUniformLocation(mShader, "u_MP"), 1, GL_FALSE, &mp[0][0]);
 		glUniform4f(Shaders::GetUniformLocation(mShader, "u_Color"), color.r, color.g, color.b, color.a);
