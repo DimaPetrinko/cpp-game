@@ -10,10 +10,22 @@ namespace GameLoop
 
 	void Game::InitializeData()
 	{
-		mPlayer = new Player({-180,0}, RendererFarm::CreateBoxRenderer({10.0f, 10.0f},
-				{0.1f, 0.2f, 0.75f, 1.0f}), 400.0f);
-		Object* other = new Object({0, -130}, RendererFarm::CreateBoxRenderer({6000.0f, 100.0f},
-				{0.75f, 0.2f, 0.1f, 1.0f}));
+		mPlayer = new Objects::Player(
+			{-180,0},
+			RendererFarm::CreateBoxRenderer(
+				{10.0f, 10.0f},
+				{1.0f, 1.0f, 1.0f, 1.0f}
+			),
+			400.0f,
+			"res/textures/image.png"
+		);
+		Objects::Object* other = new Objects::Object(
+			{0, -130},
+			RendererFarm::CreateBoxRenderer(
+				{6000.0f, 100.0f},
+				{0.75f, 0.2f, 0.1f, 1.0f}
+			)
+		);
 
 		mGameObjects.push_back(mPlayer);
 		mGameObjects.push_back(other);
@@ -70,7 +82,6 @@ namespace GameLoop
 
 		for (auto &&go : mGameObjects)
 		{
-			// mRenderer->DrawQuad(go->Size, go->Position, go->SpriteColor);
 			go->GetRenderer()->Draw();
 		}
 

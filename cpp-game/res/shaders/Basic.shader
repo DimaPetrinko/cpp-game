@@ -6,12 +6,12 @@ layout(location = 1) in vec2 i_TexCoord;
 
 uniform mat4 u_MP;
 
-out vec2 o_TexCoord;
+out vec2 v_TexCoord;
 
 void main()
 {
 	gl_Position = u_MP * vec4(i_Position, 0, 1);
-	o_TexCoord = i_TexCoord;
+	v_TexCoord = i_TexCoord;
 }
 
 #shader fragment
@@ -19,7 +19,7 @@ void main()
 
 out vec4 color;
 
-in vec2 i_TexCoord;
+in vec2 v_TexCoord;
 
 uniform vec4 u_Color;
 uniform sampler2D u_Texture;
@@ -27,6 +27,6 @@ uniform sampler2D u_Texture;
 void main()
 {
 	vec4 textureColor = vec4(1,1,1,1);
-	if (textureSize(u_Texture, 0).x > 1) textureColor = texture2D(u_Texture, i_TexCoord);
+	if (textureSize(u_Texture, 0).x > 1) textureColor = texture2D(u_Texture, v_TexCoord);
 	color = textureColor * u_Color;
 }

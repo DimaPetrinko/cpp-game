@@ -2,14 +2,18 @@
 
 #include "Graphics/Renderer.h"
 
-BoxRenderer::BoxRenderer(vec2 size, col4 color) : ObjectRenderer(size), Color(color) {}
-
-void BoxRenderer::Draw() const
+namespace Objects
 {
-	Graphics::Renderer::Instance()->DrawQuad(Size, mOwner->Position, Color);
-}
+	BoxRenderer::BoxRenderer(vec2 size, col4 color)
+	 : ObjectRenderer(size), Color(color) {}
 
-Bounds BoxRenderer::GetBounds() const
-{
-	return Bounds(mOwner->Position, Size);
+	void BoxRenderer::Draw() const
+	{
+		Graphics::Renderer::Instance()->DrawQuad(Size, mOwner->Position, Color, mTexture);
+	}
+
+	Bounds BoxRenderer::GetBounds() const
+	{
+		return Bounds(mOwner->Position, Size);
+	}
 }

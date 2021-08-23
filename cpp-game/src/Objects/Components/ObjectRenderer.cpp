@@ -1,13 +1,21 @@
 #include "ObjectRenderer.h"
 
-ObjectRenderer::ObjectRenderer(vec2 size) : Size(size) {}
-
-ObjectRenderer::~ObjectRenderer()
+namespace Objects
 {
-	mOwner = nullptr;
-}
+	ObjectRenderer::ObjectRenderer(vec2 size) : Size(size) {}
 
-void ObjectRenderer::SetOwner(const Object* owner)
-{
-	mOwner = owner;
+	ObjectRenderer::~ObjectRenderer()
+	{
+		mOwner = nullptr;
+	}
+
+	void ObjectRenderer::SetOwner(const Object* owner)
+	{
+		mOwner = owner;
+	}
+
+	void ObjectRenderer::SetTexture(const Graphics::Texture* texture)
+	{
+		mTexture = texture;
+	}
 }

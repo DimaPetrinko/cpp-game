@@ -10,8 +10,8 @@ namespace GameLoop
 	class Game : public App
 	{
 	private:
-		std::vector<Object*> mGameObjects;
-		Player* mPlayer;
+		std::vector<Objects::Object*> mGameObjects;
+		Objects::Player* mPlayer;
 		vec2 mMousePosition;
 
 	public:
