@@ -1,21 +1,23 @@
 #include "ObjectRenderer.h"
 
-namespace Objects
+#include "Resources/AssetDatabase.h"
+
+namespace Objects::Components
 {
-	ObjectRenderer::ObjectRenderer(vec2 size) : Size(size) {}
+	ObjectRenderer::ObjectRenderer(Graphics::Mesh* mesh, Graphics::Texture* texture, Graphics::Shader* shader)
+		: mMesh(mesh), mTexture(texture), mShader(shader) {}
 
 	ObjectRenderer::~ObjectRenderer()
 	{
 		mOwner = nullptr;
+
+		if (mMesh != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mMesh));
+		if (mTexture != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mTexture));
+		if (mShader != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mShader));
 	}
 
-	void ObjectRenderer::SetOwner(const Object* owner)
+	void ObjectRenderer::SetOwner(Object* owner)
 	{
 		mOwner = owner;
-	}
-
-	void ObjectRenderer::SetTexture(const Graphics::Texture* texture)
-	{
-		mTexture = texture;
 	}
 }

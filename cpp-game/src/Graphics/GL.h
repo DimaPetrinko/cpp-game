@@ -2,6 +2,8 @@
 
 #define GLEW_STATIC
 
+#define GL_INVALID_ID 0
+
 #include <iostream>
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"

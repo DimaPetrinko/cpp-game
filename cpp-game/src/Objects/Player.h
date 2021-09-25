@@ -28,8 +28,8 @@ namespace Objects
 		bool mInAir;
 
 	public:
-		Player(BoxRenderer* renderer, float movementSpeed, const std::string& texturePath);
-		Player(vec2 position, BoxRenderer* renderer, float movementSpeed, const std::string& texturePath);
+		Player(Components::BoxRenderer* renderer, float movementSpeed);
+		Player(vec3 position, Components::BoxRenderer* renderer, float movementSpeed);
 		~Player();
 
 		void Move(vec2 movement);

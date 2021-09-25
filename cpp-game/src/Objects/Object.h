@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Utils/Vector.h"
-#include "Components/ObjectRenderer.h"
+#include "Objects/Components/TransformComponent.h"
+#include "Objects/Components/ObjectRenderer.h"
 #include "Graphics/GraphicsContext.h"
 
 namespace Objects
@@ -9,20 +10,19 @@ namespace Objects
 	class Object
 	{
 	public:
-		vec2 Position;
-
+		Components::TransformComponent Transform;
 	protected:
-		ObjectRenderer* mRenderer;
+		Components::ObjectRenderer* mRenderer; // TODO: maybe make this not a pointer?
 
 	public:
-		Object(ObjectRenderer* renderer);
-		Object(vec2 position, ObjectRenderer* renderer);
+		Object(Components::ObjectRenderer* renderer);
+		Object(vec3 position, Components::ObjectRenderer* renderer);
 		~Object();
 
 		virtual void UpdateLogic(Graphics::GraphicsContext* context);
 		virtual void UpdatePhysics();
 		virtual void ResolveCollision(vec2 resolution);
 
-		ObjectRenderer* GetRenderer() const;
+		Components::ObjectRenderer* GetRenderer() const;
 	};
 }

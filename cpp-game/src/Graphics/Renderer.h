@@ -2,9 +2,11 @@
 
 #include "Graphics/GL.h"
 #include "Graphics/GraphicsContext.h"
-#include "Graphics/GrahicsStructs.h"
-#include "Graphics/Texture.h"
-#include "Utils/ReturnCodes.h"
+#include "Graphics/IndexBuffer.h"
+#include "Graphics/VertexArray.h"
+#include "Graphics/Shader.h"
+#include "Mesh.h"
+#include "GameLoop/ReturnCodes.h"
 
 namespace Graphics
 {
@@ -12,13 +14,14 @@ namespace Graphics
 	{
 	public:
 		glm::mat4 ProjectionMatrix;
+		glm::mat4 ViewMatrix;
 		double DeltaTime;
 
 	private:
 		static Renderer* sInstance;
 		GraphicsContext mContext;
-		Mesh* mDefaultQuad;
-		GLuint mVa, mIb, mVb, mShader;
+		// Mesh* mDefaultQuad;
+		// GLuint mVa, mIb, mVb, mShader;
 		unsigned int mLastTextureSlot;
 		bool mInitialized;
 
@@ -26,21 +29,26 @@ namespace Graphics
 		Renderer();
 		~Renderer();
 
-		static Renderer* Instance();
-		GraphicsContext* Context();
+		inline static Renderer* Instance() { return sInstance; }
+		inline GraphicsContext* Context() { return &mContext; }
+		inline bool Initialized() { return mInitialized; }
 
 		ReturnCode InitializeGraphics(vec2 size, const std::string&& title);
 		void DeinitializeGraphics();
-		
-		void Clear(col4 color);
-		void FinishFrame();
 
-		void CreateGraphicsObjects();
-		Mesh* CreateDefaultQuad();
-		void InitializeGraphicsObjects();
-		void DestroyGraphicsObjects();
+		// void CreateGraphicsObjects();
+		// Mesh* CreateDefaultQuad();
+		// void InitializeGraphicsObjects();
+		// void DestroyGraphicsObjects();
+		// void DrawQuad(vec2 size, vec2 position, col4 color, const Texture* texture = nullptr);
+
+		static Mesh* GetBasicQuad();
 		unsigned int GetTextureSlot();
-		void DrawQuad(vec2 size, vec2 position, col4 color, const Texture* texture = nullptr);
+		void UpdateProjectionMatrix(int width, int height);
+
+		void Clear(col4 color);
+		void Draw(const IndexBuffer& ib, const VertexArray& va, const Shader* sh) const;
+		void PostRender();
 
 	private:
 		bool InitializeContext();

@@ -2,12 +2,7 @@
 
 #include "Graphics/Renderer.h"
 #include "Graphics/WindowData.h"
-#include "Utils/ReturnCodes.h"
-
-#define CHECK_RETURN_CODE_RUNNING_CONDITION 	if (mReturnCode == RETURN_CODE_RUNNING)
-#define CHECK_RETURN_CODE_CONDITION 			if (mReturnCode != RETURN_CODE_RUNNING)
-#define CHECK_RETURN_CODE_AND_RETURN 			if (mReturnCode != RETURN_CODE_RUNNING) return
-#define CHECK_RETURN_CODE_AND_RETURN_CODE 		if (mReturnCode != RETURN_CODE_RUNNING) return mReturnCode
+#include "GameLoop/ReturnCodes.h"
 
 namespace GameLoop
 {
@@ -40,8 +35,11 @@ namespace GameLoop
 		virtual void UpdatePhysics() = 0;
 		virtual void UpdateGraphics() = 0;
 
+		virtual void StartFrame();
+		virtual void FinishFrame();
+
 	private:
-		ReturnCode Initialize();
+		void Initialize();
 		void Deinitialize();
 	};
 }

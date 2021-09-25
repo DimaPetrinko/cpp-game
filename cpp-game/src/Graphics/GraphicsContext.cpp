@@ -1,19 +1,15 @@
 #include "GraphicsContext.h"
+
 #include "Graphics/Renderer.h"
 
 namespace Graphics
 {
 	void OnFramebufferChanged(GLFWwindow* window, int width, int height)
 	{
-		if (!Renderer::Instance()) return;
+		Renderer* instance = Renderer::Instance();
+		if (!instance) return;
 
-		// TODO: Move world zoom to camera object
-		float worldZoom = 400.0f;
-		float halfZoom = worldZoom / 2;
-		float aspect = ((float)height) / ((float)width);
-		float halfScaledAspect = aspect * halfZoom;
-
-		Renderer::Instance()->ProjectionMatrix = glm::ortho(-halfZoom, halfZoom, -halfScaledAspect, halfScaledAspect);
+		instance->UpdateProjectionMatrix(width, height);
 		glViewport(0, 0, width, height);
 	}
 

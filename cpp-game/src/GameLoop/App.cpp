@@ -2,7 +2,9 @@
 
 namespace GameLoop
 {
-	App::App(Graphics::WindowData&& windowData) : mWindowData(std::move(windowData))
+	App::App(Graphics::WindowData&& windowData)
+		: mWindowData(std::move(windowData)),
+		mReturnCode(RETURN_CODE_NOT_INITIALIZED)
 	{}
 
 	App::~App()
@@ -10,7 +12,7 @@ namespace GameLoop
 		if (mRendererCreated) delete mRenderer;
 	}
 
-	ReturnCode App::Initialize()
+	void App::Initialize()
 	{
 		mRenderer = new Graphics::Renderer();
 		mContext = mRenderer->Context();
@@ -18,12 +20,13 @@ namespace GameLoop
 
 		mReturnCode = mRenderer->InitializeGraphics(mWindowData.Size, std::move(mWindowData.Title));
 		mGraphicsInitialized = true;
-		CHECK_RETURN_CODE_AND_RETURN_CODE;
+		CheckAndReturn(mReturnCode);
 
 		InitializeData();
 		mDataInitialized = true;
+		CheckAndReturn(mReturnCode);
 
-		return mReturnCode;
+		mReturnCode = RETURN_CODE_RUNNING;
 	}
 
 	void App::Deinitialize()
@@ -41,21 +44,30 @@ namespace GameLoop
 		if (mRendererCreated)
 		{
 			delete mRenderer;
+			mContext = nullptr;
 			mRendererCreated = false;
 		}
 	}
 
+	void App::Shutdown()
+	{
+		mContext->CloseWindow();
+	}
+
 	ReturnCode App::Run()
 	{
-		mReturnCode = Initialize();
+		Initialize();
 
 		while (mReturnCode == RETURN_CODE_RUNNING)
 		{
-			UpdateInput();
-			UpdateLogic();
-			UpdatePhysics();
-			UpdateGraphics();
+			CallAndBreak(UpdateInput(), mReturnCode);
+			CallAndBreak(UpdateLogic(), mReturnCode);
+			CallAndBreak(UpdatePhysics(), mReturnCode);
 
+			CallAndBreak(StartFrame(), mReturnCode);
+			CallAndBreak(UpdateGraphics(), mReturnCode);
+			CallAndBreak(FinishFrame(), mReturnCode);
+			
 			if (mContext->ShouldWindowClose()) mReturnCode = RETURN_CODE_EXIT;
 		}
 
@@ -64,8 +76,10 @@ namespace GameLoop
 		return mReturnCode;
 	}
 
-	void App::Shutdown()
+	void App::StartFrame() {}
+
+	void App::FinishFrame()
 	{
-		mContext->CloseWindow();
+		mRenderer->PostRender();
 	}
 }

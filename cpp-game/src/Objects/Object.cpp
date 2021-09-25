@@ -2,11 +2,11 @@
 
 namespace Objects
 {
-	Object::Object(ObjectRenderer* renderer) : Object({0,0}, renderer) {}
+	Object::Object(Components::ObjectRenderer* renderer) : Object({0,0,0}, renderer) {}
 
-	Object::Object(vec2 position, ObjectRenderer* renderer) : Position(0,0), mRenderer(renderer)
+	Object::Object(vec3 position, Components::ObjectRenderer* renderer) : mRenderer(renderer)
 	{
-		Position = position;
+		Transform.Position = position;
 		mRenderer->SetOwner(this);
 	}
 
@@ -21,7 +21,7 @@ namespace Objects
 
 	void Object::ResolveCollision(vec2 resolution) {}
 
-	ObjectRenderer* Object::GetRenderer() const
+	Components::ObjectRenderer* Object::GetRenderer() const
 	{
 		return mRenderer;
 	}

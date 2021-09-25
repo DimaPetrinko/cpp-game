@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Graphics/WindowData.h"
-#include "Utils/ReturnCodes.h"
+#include "GameLoop/ReturnCodes.h"
 #include "GameLoop/App.h"
 #include "GameLoop/Game.h"
 

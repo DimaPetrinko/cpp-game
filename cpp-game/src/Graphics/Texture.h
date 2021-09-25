@@ -1,25 +1,26 @@
 #pragma once
 
-#include "GL.h"
+#include <string>
+#include "Graphics/GL.h"
+#include "Graphics/GraphicsObject.h"
+#include "Resources/Asset.h"
 
 namespace Graphics
 {
-	class Texture
+	class Texture : public GraphicsObject, public Resources::Asset
 	{
 	public:
 		unsigned int Slot;
-		int Width;
-		int Height;
+		vec2 Tiling;
 	private:
-		GLuint mRendererId;
-		int mBPP;
-
+		int mWidth, mHeight, mBPP;
+	
 	public:
 		Texture(const std::string& filePath);
 		~Texture();
 
-		void Bind() const;
-		void Bind(unsigned int slot) const;
-		void Unbind() const;
+		void Bind() const override;
+		void BindSlot() const;
+		void Unbind() const override;
 	};
 }

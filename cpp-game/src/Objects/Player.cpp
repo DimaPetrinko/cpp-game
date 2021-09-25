@@ -6,10 +6,10 @@
 
 namespace Objects
 {
-	Player::Player(BoxRenderer* renderer, float movementSpeed, const std::string& texturePath)
-		: Player({0,0}, renderer, movementSpeed, texturePath) {}
+	Player::Player(Components::BoxRenderer* renderer, float movementSpeed)
+		: Player({0,0,0}, renderer, movementSpeed) {}
 
-	Player::Player(vec2 position, BoxRenderer* renderer, float movementSpeed, const std::string& texturePath)
+	Player::Player(vec3 position, Components::BoxRenderer* renderer, float movementSpeed)
 		: Object(position, renderer), mDrag(Physics::DefaultDrag),
 			mAcceleration(0,0), mVelocity(0,0)
 	{
@@ -25,9 +25,6 @@ namespace Objects
 		mJumpsLeft = 0;
 		mInAir = false;
 		mPreviousSpaceKeyState = 0;
-
-		mTexture = new Graphics::Texture(texturePath);
-		mRenderer->SetTexture(mTexture);
 	}
 
 	Player::~Player()
@@ -58,7 +55,7 @@ namespace Objects
 
 	void Player::ResolveCollision(vec2 resolution)
 	{
-		Position += resolution;
+		Transform.Position += vec3{resolution, 0};
 		AddVelocity(resolution / Physics::DeltaTime);
 		mInAir = resolution.x == 0 && resolution.y == 0;
 	}
@@ -93,9 +90,9 @@ namespace Objects
 		mVelocity += mAcceleration;
 		mVelocity.x = std::clamp(mVelocity.x, -Physics::TerminalVelocity, Physics::TerminalVelocity);
 		mVelocity.y = std::clamp(mVelocity.y, -Physics::TerminalVelocity, Physics::TerminalVelocity);
-		Position += mVelocity * Physics::DeltaTime;
+		Transform.Position += vec3(mVelocity, 0) * Physics::DeltaTime;
 
-		// std::cout << "Physics update:\n  Position: " << COUT_V(Position)
+		// std::cout << "Physics update:\n  Position: " << COUT_V(Transform.Position)
 		// 	<< ";\n  Velocity: " << COUT_V(mVelocity)
 		// 	<< ";\n  Acceleration: " << COUT_V(mAcceleration)
 		// 	<< ";\n  Drag: " << mDrag << ";\n\n";
