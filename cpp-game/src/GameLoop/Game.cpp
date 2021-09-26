@@ -50,9 +50,10 @@ namespace GameLoop
 		// 	)
 		// );
 
+		auto assetDatabase = Resources::AssetDatabase::Instance();
 		{
-			Graphics::Texture* texture = Resources::AssetDatabase::GetAsset<Graphics::Texture>("textures/image.png");
-			Graphics::Shader* basicShader = Resources::AssetDatabase::GetAsset<Graphics::Shader>("shaders/Basic.shader");
+			Graphics::Texture* texture = assetDatabase->GetAsset<Graphics::Texture>(IMAGE_UUID);
+			Graphics::Shader* basicShader = assetDatabase->GetAsset<Graphics::Shader>(BASIC_SHADER_UUID);
 			Objects::Components::BoxRenderer* renderer = new Objects::Components::BoxRenderer(
 				{10.0f, 10.0f},
 				texture,
@@ -67,8 +68,8 @@ namespace GameLoop
 		}
 
 		{
-			Graphics::Texture* texture = Resources::AssetDatabase::GetAsset<Graphics::Texture>("textures/checker3.jpg");
-			Graphics::Shader* basicShader = Resources::AssetDatabase::GetAsset<Graphics::Shader>("shaders/Basic.shader");
+			Graphics::Texture* texture = assetDatabase->GetAsset<Graphics::Texture>(CHECKER3_UUID);
+			Graphics::Shader* basicShader = assetDatabase->GetAsset<Graphics::Shader>(BASIC_SHADER_UUID);
 			Objects::Components::BoxRenderer* renderer = new Objects::Components::BoxRenderer(
 				{600.0f, 100.0f},
 				texture,

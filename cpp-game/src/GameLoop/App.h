@@ -2,6 +2,7 @@
 
 #include "Graphics/Renderer.h"
 #include "Graphics/WindowData.h"
+#include "Resources/AssetDatabase.h"
 #include "GameLoop/ReturnCodes.h"
 
 namespace GameLoop
@@ -11,10 +12,12 @@ namespace GameLoop
 	protected:
 		Graphics::Renderer* mRenderer;
 		Graphics::GraphicsContext* mContext;
+		Resources::AssetDatabase* mAssetDatabase;
 		ReturnCode mReturnCode;
 	private:
 		Graphics::WindowData mWindowData;
 		bool mRendererCreated;
+		bool mAssetDatabaseCreated;
 		bool mGraphicsInitialized;
 		bool mDataInitialized;
 

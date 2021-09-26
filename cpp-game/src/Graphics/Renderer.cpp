@@ -219,7 +219,7 @@ namespace Graphics
 	Mesh* Renderer::GetBasicQuad()
 	{
 		// TODO: load default quad mesh
-		Mesh* mesh = Resources::AssetDatabase::GetAsset<Mesh>("models/quad.obj");
+		Mesh* mesh = Resources::AssetDatabase::Instance()->GetAsset<Mesh>(QUAD_UUID);
 
 		return mesh;
 	}

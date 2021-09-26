@@ -11,9 +11,10 @@ namespace Objects::Components
 	{
 		mOwner = nullptr;
 
-		if (mMesh != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mMesh));
-		if (mTexture != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mTexture));
-		if (mShader != nullptr) Resources::AssetDatabase::PutBack(ToAssetReference(mShader));
+		auto assetDatabase = Resources::AssetDatabase::Instance();
+		if (mMesh != nullptr) assetDatabase->PutBack(ToAssetReference(mMesh));
+		if (mTexture != nullptr) assetDatabase->PutBack(ToAssetReference(mTexture));
+		if (mShader != nullptr) assetDatabase->PutBack(ToAssetReference(mShader));
 	}
 
 	void ObjectRenderer::SetOwner(Object* owner)

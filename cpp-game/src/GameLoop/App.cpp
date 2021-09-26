@@ -10,6 +10,7 @@ namespace GameLoop
 	App::~App()
 	{
 		if (mRendererCreated) delete mRenderer;
+		if (mAssetDatabaseCreated) delete mAssetDatabase;
 	}
 
 	void App::Initialize()
@@ -17,6 +18,9 @@ namespace GameLoop
 		mRenderer = new Graphics::Renderer();
 		mContext = mRenderer->Context();
 		mRendererCreated = true;
+
+		mAssetDatabase = new Resources::AssetDatabase();
+		mAssetDatabaseCreated = true;
 
 		mReturnCode = mRenderer->InitializeGraphics(mWindowData.Size, std::move(mWindowData.Title));
 		mGraphicsInitialized = true;
@@ -46,6 +50,12 @@ namespace GameLoop
 			delete mRenderer;
 			mContext = nullptr;
 			mRendererCreated = false;
+		}
+
+		if (mAssetDatabaseCreated)
+		{
+			delete mAssetDatabase;
+			mAssetDatabaseCreated = false;
 		}
 	}
 
