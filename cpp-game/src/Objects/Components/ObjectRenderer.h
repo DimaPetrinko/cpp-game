@@ -14,7 +14,7 @@ namespace Objects
 
 	protected:
 		const Object* mOwner;
-		const Graphics::Texture* mTexture;
+		const Graphics::Texture* mTexture = nullptr;
 
 	public:
 		ObjectRenderer(vec2 size);
